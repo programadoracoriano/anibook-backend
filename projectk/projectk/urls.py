@@ -23,7 +23,10 @@ from api.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', LoginAPI, name="helloview"),
-    path('get/anime', AnimeListAPI, name="listanimes"),
+    path('login/user/', LoginAPI, name="helloview"),
+    path('login/guard/', LoginGuardAPI, name="loginguard"),
+    path('logout/', LogoutAPI, name="logout"),
+    path('get/profile/', ProfileAPI, name="getprofile"),
+    path('get/anime/list/', AnimeListAPI, name="listanimes"),
     path('api-token-auth/', views.obtain_auth_token)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

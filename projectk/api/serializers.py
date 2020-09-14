@@ -22,7 +22,7 @@ class StudioSerializer(serializers.ModelSerializer):
 class AnimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Anime
-        fields = ('id', 'name', 'episodes_number', 'minutes_per_episode', 'sinopse', 'studio_name', 'categorie_categorie')
+        fields = ('id', 'name', 'episodes_number', 'minutes_per_episode', 'sinopse', 'image', 'studio_name', 'categorie_categorie')
 
     studio_name         = serializers.SerializerMethodField('get_studio_name')
     categorie_categorie = serializers.SerializerMethodField('get_categorie_categorie')
