@@ -27,6 +27,12 @@ urlpatterns = [
     path('login/guard/', LoginGuardAPI, name="loginguard"),
     path('logout/', LogoutAPI, name="logout"),
     path('get/profile/', ProfileAPI, name="getprofile"),
+    path('get/user/data/', UserDataAPI, name="getuserdata"),
+    path('search/user/', UserSearchAPI, name="usersearch"),
     path('get/anime/list/', AnimeListAPI, name="listanimes"),
+    path('get/anime/details/', AnimeDetailsAPI, name="animedetails"),
+    path('get/anime/score/', GetScoreAPI, name="animescore"),
+    path('anime/list/all/', AnimeListAllAPI, name="allanimelist"),
+    path('search/all/', AnimeSearchAPI, name="search"),
     path('api-token-auth/', views.obtain_auth_token)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
