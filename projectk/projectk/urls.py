@@ -34,5 +34,6 @@ urlpatterns = [
     path('get/anime/score/', GetScoreAPI, name="animescore"),
     path('anime/list/all/', AnimeListAllAPI, name="allanimelist"),
     path('search/all/', AnimeSearchAPI, name="search"),
+    path('search/by/season/', SeasonSearchAPI, name="searchseason"),
     path('api-token-auth/', views.obtain_auth_token)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

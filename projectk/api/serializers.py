@@ -62,7 +62,7 @@ class AnimeSerializer(serializers.ModelSerializer):
     producers    = ProducerSerializer(read_only=True, many=True)
     class Meta:
         model   = Anime
-        fields  = ('id', 'name', 'episodes_number', 'minutes_per_episode', 'sinopse', 'image', 'studio', 'categorie',
+        fields  = ('id', 'name', 'episodes_number', 'minutes_per_episode', 'aired','sinopse', 'image', 'studio', 'categorie',
                   'rating', 'type', 'source', 'licensors', 'producers',)
 
 class StatusSerializer(serializers.ModelSerializer):
