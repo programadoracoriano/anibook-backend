@@ -9,7 +9,7 @@ from .serializers import *
 from django.db.models import Avg, Sum, FloatField, F, Count
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 @api_view(['GET'])
 @authentication_classes([])
 def LoginGuardAPI(request):
@@ -156,7 +156,15 @@ def AnimeListAllAPI(request):
 def AnimeSearchAPI(request):
     if request.method == 'GET':
         anime = Anime.objects.filter(name__icontains=request.GET['search'])
-        serializer = AnimeSerializer(anime, many=True)
+        page = request.GET.get('page', 1)
+        paginator = Paginator(anime, 2)
+        try:
+            animes = paginator.page(page)
+        except PageNotAnInteger:
+            animes = paginator.page(1)
+        except EmptyPage:
+            animes = paginator.page(paginator.num_pages)
+        serializer = AnimeSerializer(animes, many=True)
         return Response(serializer.data)
 
 @api_view(['GET'])
@@ -178,8 +186,16 @@ def SeasonSearchAPI(request):
             anime = Anime.objects.filter(aired__month__in=summer, aired__year=year)
         elif season == 'fall':
             anime = Anime.objects.filter(aired__month__in=fall, aired__year=year)
-    serializer = AnimeSerializer(anime, many=True)
-    return Response(serializer.data)
+        page = request.GET.get('page', 1)
+        paginator = Paginator(anime, 2)
+        try:
+            animes = paginator.page(page)
+        except PageNotAnInteger:
+            animes = paginator.page(1)
+        except EmptyPage:
+            animes = paginator.page(paginator.num_pages)
+        serializer = AnimeSerializer(animes, many=True)
+        return Response(serializer.data)
 
 
 
