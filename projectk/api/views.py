@@ -55,11 +55,38 @@ def LoginAPI(request):            # <-- And here
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
+def UserDetailsAPI(request):
+    if request.method == 'GET':
+        uId         = request.GET['id']
+        user        = User.objects.get(id=uId)
+        serializer  = UserSerializer(user)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def UserExtraDetailsAPI(request):
+    if request.method == 'GET':
+        uId = request.GET['id']
+        u = User.objects.get(id=uId)
+        user = User.objects.annotate(total_watching=Sum(F('animestatus__episodes_number') * F('animestatus__anime__episodes_number'), output_field=FloatField()) /60,
+                                     total_completed=Sum((F('animestatus__completed') * F('animestatus__anime__episodes_number')) * F('animestatus__anime__minutes_per_episode'),
+                                                         output_field=FloatField())/ 60).get(id=u.id)
+        total_completed = AnimeStatus.objects.filter(user=u, status__id=2).count()
+        total_watching = AnimeStatus.objects.filter(user=u, status__id=1).count()
+        return Response({"total_hours":user.total_watching,
+                         "total_completed":user.total_completed,
+                         "animes_completed":total_completed,
+                         "animes_watching":total_watching})
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
 def ProfileAPI(request):
     if request.method == 'GET':
         getUser = User.objects.get(id=request.user.id)
         serializer = UserSerializer(getUser, many=False)
         return Response(serializer.data)
+
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -128,7 +155,7 @@ def AnimeListAllAPI(request):
                 if n_episodes == getAnime.episodes_number or n_episodes > getAnime.episodes_number:
                     getStatusCompleted = Status.objects.get(val=2)
                     query = anSt.update(user=request.user, anime=getAnime, completed=1, status=getStatusCompleted,
-                                        episodes_number=0)
+                                        episodes_number=n_episodes)
                     msg = {"msg": "Anime moved to completed section."}
                 else:
                     getStatusWatching = Status.objects.get(val=1)
@@ -214,10 +241,36 @@ def GetScoreAPI(request):
     if request.method == 'GET':
         anId            = request.GET['id']
         getAnime        = Anime.objects.annotate(total_score=Avg('animestatus__score', output_field=FloatField())).get(id=anId)
-
         tscore = {"total_score":getAnime.total_score}
-
         return Response(tscore)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def FollowerAPI(request):
+    if request.method == 'GET':
+        followerId      = request.GET['id']
+        followers       = Followers.objects.filter(follower=request.user, followers=followerId)
+        f_state         = 0
+        print(request.user.username)
+        if followers.count() == 0:
+            qs = Followers.objects.create(follower=request.user, followers=followerId)
+            f_state = 1
+        elif followers.count > 0:
+            qs = Followers.objects.delete()
+            f_state = 0
+        return Response({"f_state":f_state})
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def DetectFollowerAPI(request):
+    followerId = request.GET['id']
+    followers = Followers.objects.filter(follower=request.user, followers=followerId)
+    f_state = 0
+    if followers.count() == 0:
+        f_state = 1
+    elif followers.count > 0:
+        f_state = 0
+    return Response({"f_state": f_state})
 
 
 

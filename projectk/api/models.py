@@ -100,6 +100,10 @@ class AnimeStatus(models.Model):
     status          = models.ForeignKey(Status, null=False, blank=False, verbose_name="Status", on_delete=models.CASCADE)
     score           = models.IntegerField(null=True, blank=False, verbose_name="Score")
 
+class Followers(models.Model):
+    follower    = models.ForeignKey(User, null=False, blank=False, verbose_name="Anime", on_delete=models.CASCADE)
+    followers   = models.IntegerField(null=False, blank=True)
+
 
 
 
