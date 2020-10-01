@@ -24,12 +24,12 @@ def LoginGuardAPI(request):
 
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 @authentication_classes([])
 def LoginAPI(request):            # <-- And here
-    if request.method == 'GET':
-        username = request.GET.get('username', '')
-        password = request.GET.get('password', '')
+    if request.method == 'POST':
+        username = request.data['username']
+        password = request.data['password']
         user = authenticate(username=username, password=password)
         content = {}
         if user is not None:
@@ -184,7 +184,7 @@ def AnimeSearchAPI(request):
     if request.method == 'GET':
         anime = Anime.objects.filter(name__icontains=request.GET['search'])
         page = request.GET.get('page', 1)
-        paginator = Paginator(anime, 2)
+        paginator = Paginator(anime, 15)
         try:
             animes = paginator.page(page)
         except PageNotAnInteger:
@@ -214,7 +214,7 @@ def SeasonSearchAPI(request):
         elif season == 'fall':
             anime = Anime.objects.filter(aired__month__in=fall, aired__year=year)
         page = request.GET.get('page', 1)
-        paginator = Paginator(anime, 2)
+        paginator = Paginator(anime, 15)
         try:
             animes = paginator.page(page)
         except PageNotAnInteger:
