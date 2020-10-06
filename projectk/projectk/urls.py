@@ -39,5 +39,7 @@ urlpatterns = [
     path('anime/list/all/', AnimeListAllAPI, name="allanimelist"),
     path('search/all/', AnimeSearchAPI, name="search"),
     path('search/by/season/', SeasonSearchAPI, name="searchseason"),
+    path('search/by/genre/', SearchByGenreAPI, name="searchbygenre"),
+    path('get/genres/', GetGenresAPI, name="getgenres"),
     path('api-token-auth/', views.obtain_auth_token)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

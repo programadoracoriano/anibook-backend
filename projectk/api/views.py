@@ -196,6 +196,23 @@ def AnimeSearchAPI(request):
 
 @api_view(['GET'])
 @authentication_classes([])
+def GetGenresAPI(request):
+    if request.method == 'GET':
+        qs = Categorie.objects.order_by("categorie")
+        serializer = CategorieSerializer(qs, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+@authentication_classes([])
+def SearchByGenreAPI(request):
+    if request.method == 'GET':
+        genre   = request.GET['genre']
+        qs      = Anime.objects.filter(categorie__in=genre)
+        serializer = AnimeTypeSerializer(qs, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+@authentication_classes([])
 def SeasonSearchAPI(request):
     if request.method == 'GET':
         winter = ['01', '02', '03']
