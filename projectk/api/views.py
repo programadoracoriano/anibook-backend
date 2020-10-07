@@ -208,7 +208,7 @@ def SearchByGenreAPI(request):
     if request.method == 'GET':
         genre   = request.GET['genre']
         qs      = Anime.objects.filter(categorie__in=genre)
-        serializer = AnimeTypeSerializer(qs, many=True)
+        serializer = AnimeSerializer(qs, many=True)
         return Response(serializer.data)
 
 @api_view(['GET'])
