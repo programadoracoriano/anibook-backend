@@ -208,7 +208,15 @@ def SearchByGenreAPI(request):
     if request.method == 'GET':
         genre   = request.GET['genre']
         qs      = Anime.objects.filter(categorie__in=genre)
-        serializer = AnimeSerializer(qs, many=True)
+        page = request.GET.get('page', 1)
+        paginator = Paginator(qs, 15)
+        try:
+            animes = paginator.page(page)
+        except PageNotAnInteger:
+            animes = paginator.page(1)
+        except EmptyPage:
+            animes = paginator.page(paginator.num_pages)
+        serializer = AnimeSerializer(animes, many=True)
         return Response(serializer.data)
 
 @api_view(['GET'])
