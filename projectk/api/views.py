@@ -22,6 +22,24 @@ def LoginGuardAPI(request):
             isLogged = True
         return Response({"isLogged":isLogged})
 
+@api_view(['POST'])
+@authentication_classes([])
+def SignupAPI(request):
+    if request.method == 'POST':
+        msg = {}
+        username = request.data['username']
+        password = request.data['password']
+        getUsers = User.objects.filter(username=username)
+        if getUsers.count() > 0:
+            msg = {'msg':'User Already Exists!Please choose other username!', 'success':False}
+        elif len(username) < 6 or len(username)> 20:
+            msg = {'msg': 'Your username needs to be 6 to 20 characters.', 'success':False}
+        elif len(password) < 8 or len(password)>16:
+            msg = {'msg': 'Your username needs to be 6 to 20 characters.', 'success':False}
+        else:
+            qs = User.objects.create_user(username=username, password=password)
+            msg = {'msg': 'User created successfully!', 'success':True}
+        return Response(msg)
 
 
 @api_view(['POST'])

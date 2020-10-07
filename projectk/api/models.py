@@ -104,6 +104,14 @@ class Followers(models.Model):
     follower    = models.ForeignKey(User, null=False, blank=False, verbose_name="Anime", on_delete=models.CASCADE)
     followers   = models.IntegerField(null=False, blank=True)
 
+class CustomList(models.Model):
+    title       = models.CharField(max_length=100, null=False, blank=False, verbose_name="Title")
+    main_anime  = models.ForeignKey(Anime, null=False, blank=False, verbose_name="Anime", on_delete=models.CASCADE)
+
+class CustomListAnime(models.Model):
+    custom_list = models.ForeignKey(CustomList, null=False, blank=False, verbose_name="Custom List", on_delete=models.CASCADE)
+    anime       = models.ForeignKey(Anime, null=False, blank=False, verbose_name="Anime", on_delete=models.CASCADE)
+
 
 
 
