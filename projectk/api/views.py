@@ -297,7 +297,7 @@ def FollowerAPI(request):
         if followers.count() == 0:
             qs = Followers.objects.create(follower=request.user, followers=followerId)
             f_state = 0
-        elif followers.count > 0:
+        elif followers.count() > 0:
             qs = Followers.objects.delete()
             f_state = 1
         return Response({"f_state":f_state})
