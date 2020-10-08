@@ -167,7 +167,7 @@ def AnimeListAllAPI(request):
                 else:
                     getStatusWatching = Status.objects.get(val=1)
                     query = AnimeStatus.objects.create(user=request.user, anime=getAnime,
-                                        status=getStatusWatching, completed=1)
+                                        status=getStatusWatching, episodes_number=n_episodes,completed=1)
                     msg = {"msg":"Anime Added successfully"}
             elif anSt.count() > 0:
                 if n_episodes == getAnime.episodes_number or n_episodes > getAnime.episodes_number:
@@ -294,13 +294,12 @@ def FollowerAPI(request):
         followerId      = request.GET['id']
         followers       = Followers.objects.filter(follower=request.user, followers=followerId)
         f_state         = 0
-        print(request.user.username)
         if followers.count() == 0:
             qs = Followers.objects.create(follower=request.user, followers=followerId)
-            f_state = 1
+            f_state = 0
         elif followers.count > 0:
             qs = Followers.objects.delete()
-            f_state = 0
+            f_state = 1
         return Response({"f_state":f_state})
 
 @api_view(['GET'])
@@ -311,7 +310,7 @@ def DetectFollowerAPI(request):
     f_state = 0
     if followers.count() == 0:
         f_state = 1
-    elif followers.count > 0:
+    elif followers.count() > 0:
         f_state = 0
     return Response({"f_state": f_state})
 
