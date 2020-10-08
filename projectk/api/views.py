@@ -377,6 +377,30 @@ def ListCustomListAPI(request):
         serializer = CustomListSerializer(qs, many=True)
         return Response(serializer.data)
 
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+def AddAnimeCustomListAPI(request):
+    if request.method == 'POST':
+        msg = {}
+        cId   = request.data['customlist']
+        mainA   = request.data['anime']
+        getList = CustomList.objects.get(id=cId, user=request.user)
+        getAnime = Anime.objects.get(id=mainA)
+        if mainA == None:
+            msg = {'msg': 'Select a anime to add!'}
+        else:
+            qs  = CustomListAnime.objects.create(custom_list=getList,  main_anime=getAnime)
+            msg = {'msg':'Anime added Successfully!'}
+        return Response(msg)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def ListCustomListAnimeAPI(request):
+    if request.method == 'GET':
+        id = request.GET['id']
+        qs = CustomListAnime.objects.filter(id=id, user=request.user).order_by("-id")
+        serializer = CustomListAnimeSerializer(qs, many=True)
+        return Response(serializer.data)
 
 
 

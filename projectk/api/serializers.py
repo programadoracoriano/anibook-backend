@@ -92,6 +92,13 @@ class CustomListSerializer(serializers.ModelSerializer):
         model   = CustomList
         fields  = ('user' , 'title', 'main_anime')
 
+class CustomListAnimeSerializer(serializers.ModelSerializer):
+    anime       = AnimeSerializer(read_only=True, many=False)
+    custom_list = CustomListSerializer(read_only=True, many=False)
+    class Meta:
+        model   = CustomListAnime
+        fields  = ('title', 'custom_list')
+
 
 
 
