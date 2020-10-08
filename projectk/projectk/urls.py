@@ -36,6 +36,7 @@ urlpatterns = [
     path('list/followers/', ListFollowersAPI, name="listfollower"),
     path('list/following/', ListFollowingAPI, name="listfollowing"),
     path('search/user/', UserSearchAPI, name="usersearch"),
+    path('create/customlist', CreateCustomListAPI, name="customlist"),
     path('get/anime/list/', AnimeListAPI, name="listanimes"),
     path('get/anime/details/', AnimeDetailsAPI, name="animedetails"),
     path('get/anime/score/', GetScoreAPI, name="animescore"),
