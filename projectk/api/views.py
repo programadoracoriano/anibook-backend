@@ -35,7 +35,7 @@ def SignupAPI(request):
         elif len(username) < 6 or len(username)> 20:
             msg = {'msg': 'Your username needs to be 6 to 20 characters.', 'success':False}
         elif len(password) < 8 or len(password)>16:
-            msg = {'msg': 'Your username needs to be 6 to 20 characters.', 'success':False}
+            msg = {'msg': 'Your passwords needs to be 8 to 16 characters.', 'success':False}
         else:
             qs = User.objects.create_user(username=username, password=password)
             msg = {'msg': 'User created successfully!', 'success':True}
@@ -320,7 +320,7 @@ def ListFollowersAPI(request):
     if request.method == 'GET':
         followersList = []
         follower = ''
-        getF = Followers.objects.filter(user=request.user)
+        getF = Followers.objects.filter(follower=request.user)
         for i in getF:
             followersList.append(i.followers)
         qs = User.objects.filter(id__in=followersList)
@@ -352,8 +352,22 @@ def ListFollowingAPI(request):
         serializer = UserSerializer(follower, many=True)
         return Response(serializer.data)
 
-
-
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+def CreateCustomListAPI(request):
+    if request.method == 'POST':
+        msg = {}
+        title = request.data['title']
+        mainA = request.data['main']
+        getAnime = Anime.objects.get(id=mainA)
+        if len(title) < 6 or len(title) > 100:
+            msg = {'msg':'The title needs to be between 6 to 100 characters'}
+        elif mainA == None:
+            msg = {'msg': 'Select a main Anime, for image porposes!'}
+        else:
+            qs  = CustomList.objects.create(title=title, main_anime=getAnime)
+            msg = {'msg':'Custom List Create Succesfully'}
+        return Response(msg)
 
 
 

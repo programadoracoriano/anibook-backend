@@ -23,7 +23,7 @@ from api.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('signup/user/', signupAPI, name="signup"),
+    path('signup/user/', SignupAPI, name="signup"),
     path('login/user/', LoginAPI, name="signin"),
     path('login/guard/', LoginGuardAPI, name="loginguard"),
     path('logout/', LogoutAPI, name="logout"),
