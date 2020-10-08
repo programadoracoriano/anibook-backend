@@ -314,6 +314,45 @@ def DetectFollowerAPI(request):
         f_state = 0
     return Response({"f_state": f_state})
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def ListFollowersAPI(request):
+    if request.method == 'GET':
+        followersList = []
+        follower = ''
+        getF = Followers.objects.filter(user=request.user)
+        for i in getF:
+            followersList.append(i.followers)
+        qs = User.objects.filter(id__in=followersList)
+        page = request.GET.get('page', 1)
+        paginator = Paginator(qs, 15)
+        try:
+            follower = paginator.page(page)
+        except PageNotAnInteger:
+            follower = paginator.page(1)
+        except EmptyPage:
+            follower = paginator.page(paginator.num_pages)
+        serializer = UserSerializer(follower, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def ListFollowingAPI(request):
+    if request.method == 'GET':
+        follower = ''
+        qs = Followers.objects.filter(followers=request.user.id)
+        page = request.GET.get('page', 1)
+        paginator = Paginator(qs, 15)
+        try:
+            follower = paginator.page(page)
+        except PageNotAnInteger:
+            follower = paginator.page(1)
+        except EmptyPage:
+            follower = paginator.page(paginator.num_pages)
+        serializer = UserSerializer(follower, many=True)
+        return Response(serializer.data)
+
+
 
 
 
