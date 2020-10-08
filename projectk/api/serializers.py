@@ -85,6 +85,13 @@ class FollowerSerializer(serializers.ModelSerializer):
         model   = Followers
         fields  = ('follower' , 'followers')
 
+class CustomListSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True, many=False)
+    anime = AnimeSerializer(read_only=True, many=False)
+    class Meta:
+        model   = CustomList
+        fields  = ('user' , 'title', 'main_anime')
+
 
 
 

@@ -105,6 +105,7 @@ class Followers(models.Model):
     followers   = models.IntegerField(null=False, blank=True)
 
 class CustomList(models.Model):
+    user        = models.ForeignKey(User, null=True, blank=False, verbose_name="User", on_delete=models.CASCADE)
     title       = models.CharField(max_length=100, null=False, blank=False, verbose_name="Title")
     main_anime  = models.ForeignKey(Anime, null=False, blank=False, verbose_name="Anime", on_delete=models.CASCADE)
 

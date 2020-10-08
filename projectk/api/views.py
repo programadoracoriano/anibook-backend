@@ -365,9 +365,19 @@ def CreateCustomListAPI(request):
         elif mainA == None:
             msg = {'msg': 'Select a main Anime, for image porposes!'}
         else:
-            qs  = CustomList.objects.create(title=title, main_anime=getAnime)
-            msg = {'msg':'Custom List Create Succesfully'}
+            qs  = CustomList.objects.create(user=request.user, title=title, main_anime=getAnime)
+            msg = {'msg':'Custom List Create Successfully'}
         return Response(msg)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def ListCustomListAPI(request):
+    if request.method == 'GET':
+        qs = CustomList.objects.filter(user=request.user).order_by("-id")
+        serializer = CustomListSerializer(qs, many=True)
+        return Response(serializer.data)
+
+
 
 
 
