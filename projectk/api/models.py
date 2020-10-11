@@ -21,8 +21,6 @@ def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
 
-
-
 class Categorie(models.Model):
     categorie = models.CharField(max_length=75, null=False, blank=False, verbose_name="Categorie")
     def __str__(self):
@@ -107,7 +105,7 @@ class Followers(models.Model):
 class CustomList(models.Model):
     user        = models.ForeignKey(User, null=True, blank=False, verbose_name="User", on_delete=models.CASCADE)
     title       = models.CharField(max_length=100, null=False, blank=False, verbose_name="Title")
-    main_anime  = models.ForeignKey(Anime, null=False, blank=False, verbose_name="Anime", on_delete=models.CASCADE)
+    anime       = models.ManyToManyField(Anime, verbose_name="Anime")
 
 class CustomListAnime(models.Model):
     custom_list = models.ForeignKey(CustomList, null=False, blank=False, verbose_name="Custom List", on_delete=models.CASCADE)
