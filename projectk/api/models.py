@@ -106,10 +106,10 @@ class CustomList(models.Model):
     user        = models.ForeignKey(User, null=True, blank=False, verbose_name="User", on_delete=models.CASCADE)
     title       = models.CharField(max_length=100, null=False, blank=False, verbose_name="Title")
     anime       = models.ManyToManyField(Anime, verbose_name="Anime")
+    image       = ResizedImageField(null=True, blank=False, size=[800, 600], keep_meta=False, quality=80, upload_to='custom_list',
+                      force_format='JPEG')
 
-class CustomListAnime(models.Model):
-    custom_list = models.ForeignKey(CustomList, null=False, blank=False, verbose_name="Custom List", on_delete=models.CASCADE)
-    anime       = models.ForeignKey(Anime, null=False, blank=False, verbose_name="Anime", on_delete=models.CASCADE)
+
 
 
 

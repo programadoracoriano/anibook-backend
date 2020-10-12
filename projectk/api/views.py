@@ -1,4 +1,5 @@
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated  # <-- Here
 from django.contrib.auth import authenticate, login, logout
@@ -8,8 +9,9 @@ from .models import *
 from .serializers import *
 from django.db.models import Avg, Sum, FloatField, F, Count
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes, parser_classes
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 @api_view(['GET'])
 @authentication_classes([])
 def LoginGuardAPI(request):
@@ -352,9 +354,11 @@ def ListFollowingAPI(request):
         serializer = UserSerializer(follower, many=True)
         return Response(serializer.data)
 
-@api_view(['POST'])
+
+@api_view(['POST', 'GET'])
 @authentication_classes([TokenAuthentication])
-def CreateCustomListAPI(request):
+@parser_classes([MultiPartParser])
+def CustomListAPI(request):
     if request.method == 'POST':
         msg = {}
         title = request.data['title']
@@ -363,44 +367,44 @@ def CreateCustomListAPI(request):
         if len(title) < 6 or len(title) > 100:
             msg = {'msg':'The title needs to be between 6 to 100 characters'}
         elif mainA == None:
-            msg = {'msg': 'Select a main Anime, for image porposes!'}
+            msg = {'msg': 'Select a image!'}
         else:
-            qs  = CustomList.objects.create(user=request.user, title=title, main_anime=getAnime)
-            msg = {'msg':'Custom List Create Successfully'}
+            qs  = CustomList.objects.create(user=request.user, title=title, image=mainA)
+            msg = {'msg':'Custom List Created Successfully'}
         return Response(msg)
-
-@api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-def ListCustomListAPI(request):
     if request.method == 'GET':
         qs = CustomList.objects.filter(user=request.user).order_by("-id")
         serializer = CustomListSerializer(qs, many=True)
         return Response(serializer.data)
 
-@api_view(['POST'])
-@authentication_classes([TokenAuthentication])
-def AddAnimeCustomListAPI(request):
-    if request.method == 'POST':
-        msg = {}
-        cId   = request.data['customlist']
-        mainA   = request.data['anime']
-        getList = CustomList.objects.get(id=cId, user=request.user)
-        getAnime = Anime.objects.get(id=mainA)
-        if mainA == None:
-            msg = {'msg': 'Select a anime to add!'}
-        else:
-            qs  = CustomListAnime.objects.create(custom_list=getList,  main_anime=getAnime)
-            msg = {'msg':'Anime added Successfully!'}
-        return Response(msg)
 
-@api_view(['GET'])
+
+@api_view(['POST', 'GET'])
 @authentication_classes([TokenAuthentication])
-def ListCustomListAnimeAPI(request):
+@parser_classes([MultiPartParser])
+def AnimeCustomListAPI(request):
+    if request.method == 'POST':
+        cList       = request.data['id']
+        animeId     = request.data['anime']
+        getCList    = CustomList.objects.get(id=cList)
+        getAnime    = Anime.objects.get(id=animeId)
+        msg         = {}
+        if cList == None:
+            msg = {'msg':'Something Bad Happened!'}
+        elif animeId == None:
+            msg = {'msg': 'You need to choose a anime'}
+        else:
+            getCList.anime.add(getAnime)
+            msg = {'msg':'Anime Added Successfully!'}
+        return Response(msg)
     if request.method == 'GET':
-        id = request.GET['id']
-        qs = CustomListAnime.objects.filter(id=id, user=request.user).order_by("-id")
-        serializer = CustomListAnimeSerializer(qs, many=True)
+        animeId = request.GET['id']
+        qs = CustomList.objects.filter(id=animeId).order_by("-id")
+        serializer = CustomListSerializer(qs, many=True)
         return Response(serializer.data)
+
+
+
 
 
 
