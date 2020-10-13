@@ -357,22 +357,18 @@ def ListFollowingAPI(request):
 
 @api_view(['POST', 'GET'])
 @authentication_classes([TokenAuthentication])
-@parser_classes([MultiPartParser])
 def CustomListAPI(request):
     if request.method == 'POST':
         msg = {}
         title = request.data['title']
         mainA = request.data['main']
-        imgdata = base64.b64decode(mainA)
-        filename = 'some_image.jpg'
-        with open(filename, 'wb') as f:
-            f.write(imgdata)
+        getAnime = Anime.objects.get(id=mainA)
         if len(title) < 6 or len(title) > 100:
             msg = {'msg': 'The title needs to be between 6 to 100 characters'}
         elif mainA == None:
             msg = {'msg': 'Select a image!'}
         else:
-            qs = CustomList.objects.create(user=request.user, title=title)
+            qs = CustomList.objects.create(user=request.user, title=title, image=getAnime.image.url)
             msg = {'msg': 'Custom List Created Successfully'}
         return Response(msg)
     if request.method == 'GET':
