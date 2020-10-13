@@ -11,7 +11,7 @@ from django.db.models import Avg, Sum, FloatField, F, Count
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes, parser_classes
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+import base64
 @api_view(['GET'])
 @authentication_classes([])
 def LoginGuardAPI(request):
@@ -363,20 +363,22 @@ def CustomListAPI(request):
         msg = {}
         title = request.data['title']
         mainA = request.data['main']
-        getAnime = Anime.objects.get(id=mainA)
+        imgdata = base64.b64decode(mainA)
+        filename = 'some_image.jpg'
+        with open(filename, 'wb') as f:
+            f.write(imgdata)
         if len(title) < 6 or len(title) > 100:
-            msg = {'msg':'The title needs to be between 6 to 100 characters'}
+            msg = {'msg': 'The title needs to be between 6 to 100 characters'}
         elif mainA == None:
             msg = {'msg': 'Select a image!'}
         else:
-            qs  = CustomList.objects.create(user=request.user, title=title, image=mainA)
-            msg = {'msg':'Custom List Created Successfully'}
+            qs = CustomList.objects.create(user=request.user, title=title)
+            msg = {'msg': 'Custom List Created Successfully'}
         return Response(msg)
     if request.method == 'GET':
         qs = CustomList.objects.filter(user=request.user).order_by("-id")
         serializer = CustomListSerializer(qs, many=True)
         return Response(serializer.data)
-
 
 
 @api_view(['POST', 'GET'])
