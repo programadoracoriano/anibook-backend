@@ -351,7 +351,7 @@ def ListFollowingAPI(request):
             follower = paginator.page(1)
         except EmptyPage:
             follower = paginator.page(paginator.num_pages)
-        serializer = UserSerializer(follower, many=True)
+        serializer = FollowerSerializer(follower, many=True)
         return Response(serializer.data)
 
 
@@ -368,7 +368,7 @@ def CustomListAPI(request):
         elif mainA == None:
             msg = {'msg': 'Select a image!'}
         else:
-            qs = CustomList.objects.create(user=request.user, title=title, image=getAnime.image.url)
+            qs = CustomList.objects.create(user=request.user, title=title, image=getAnime.image)
             msg = {'msg': 'Custom List Created Successfully'}
         return Response(msg)
     if request.method == 'GET':
@@ -392,12 +392,13 @@ def AnimeCustomListAPI(request):
         elif animeId == None:
             msg = {'msg': 'You need to choose a anime'}
         else:
-            getCList.anime.add(getAnime)
+            sv = getCList.anime.add(getAnime)
+            sv.save()
             msg = {'msg':'Anime Added Successfully!'}
         return Response(msg)
     if request.method == 'GET':
-        animeId = request.GET['id']
-        qs = CustomList.objects.filter(id=animeId).order_by("-id")
+        customId = request.GET['id']
+        qs = CustomList.objects.get(id=customId)
         serializer = CustomListSerializer(qs, many=False)
         return Response(serializer.data)
 

@@ -80,7 +80,7 @@ class AnimeStatusSerializer(serializers.ModelSerializer):
         fields  = ('anime' , 'user', 'episodes_number', 'completed', 'status', 'score')
 
 class FollowerSerializer(serializers.ModelSerializer):
-    user    = UserSerializer(read_only=True, many=False)
+    follower    = UserSerializer(read_only=True, many=False)
     class Meta:
         model   = Followers
         fields  = ('follower' , 'followers')
@@ -90,7 +90,7 @@ class CustomListSerializer(serializers.ModelSerializer):
     anime = AnimeSerializer(read_only=True, many=False)
     class Meta:
         model   = CustomList
-        fields  = ('id', 'user' , 'title', 'main_anime')
+        fields  = ('id', 'user' , 'title', 'anime', 'image.url')
 
 
 
