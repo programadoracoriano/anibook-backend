@@ -90,7 +90,16 @@ class CustomListSerializer(serializers.ModelSerializer):
     anime = AnimeSerializer(read_only=True, many=False)
     class Meta:
         model   = CustomList
-        fields  = ('id', 'user' , 'title', 'anime', 'image.url')
+        fields  = ('id', 'user' , 'title', 'image')
+
+class AnimeCustomListSerializer(serializers.ModelSerializer):
+    custom_list = CustomListSerializer(read_only=True, many=False)
+    anime = AnimeSerializer(read_only=True, many=False)
+    class Meta:
+        model   = AnimeCustomList
+        fields  = ('id', 'custom_list' , 'anime')
+
+
 
 
 

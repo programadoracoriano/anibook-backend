@@ -376,10 +376,18 @@ def CustomListAPI(request):
         serializer = CustomListSerializer(qs, many=True)
         return Response(serializer.data)
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def GetUniqueCustomList(request):
+    if request.method == 'GET':
+        cList = request.GET['id']
+        qs = CustomList.objects.get(id=cList)
+        serializer = CustomListSerializer(qs, many=True)
+        Response(serializer.data)
+
 
 @api_view(['POST', 'GET'])
 @authentication_classes([TokenAuthentication])
-@parser_classes([MultiPartParser])
 def AnimeCustomListAPI(request):
     if request.method == 'POST':
         cList       = request.data['id']
@@ -392,14 +400,13 @@ def AnimeCustomListAPI(request):
         elif animeId == None:
             msg = {'msg': 'You need to choose a anime'}
         else:
-            sv = getCList.anime.add(getAnime)
-            sv.save()
+            AnimeCustomList.objects.create(custom_list=getCList, anime=getAnime)
             msg = {'msg':'Anime Added Successfully!'}
         return Response(msg)
     if request.method == 'GET':
         customId = request.GET['id']
-        qs = CustomList.objects.get(id=customId)
-        serializer = CustomListSerializer(qs, many=False)
+        qs = AnimeCustomList.objects.filter(custom_list__id=customId)
+        serializer = CustomListSerializer(qs, many=True)
         return Response(serializer.data)
 
 
