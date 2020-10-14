@@ -398,7 +398,7 @@ def AnimeCustomListAPI(request):
     if request.method == 'GET':
         animeId = request.GET['id']
         qs = CustomList.objects.filter(id=animeId).order_by("-id")
-        serializer = CustomListSerializer(qs, many=True)
+        serializer = CustomListSerializer(qs, many=False)
         return Response(serializer.data)
 
 

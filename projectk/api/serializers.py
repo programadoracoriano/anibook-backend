@@ -90,7 +90,7 @@ class CustomListSerializer(serializers.ModelSerializer):
     anime = AnimeSerializer(read_only=True, many=False)
     class Meta:
         model   = CustomList
-        fields  = ('user' , 'title', 'main_anime')
+        fields  = ('id', 'user' , 'title', 'main_anime')
 
 
 
