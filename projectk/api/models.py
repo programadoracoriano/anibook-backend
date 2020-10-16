@@ -97,6 +97,7 @@ class AnimeStatus(models.Model):
     completed       = models.IntegerField(null=True, blank=True, verbose_name="How many times completed?")
     status          = models.ForeignKey(Status, null=False, blank=False, verbose_name="Status", on_delete=models.CASCADE)
     score           = models.IntegerField(null=True, blank=False, verbose_name="Score")
+    note            = models.TextField(max_length=500, null=True, blank=True, verbose_name="Notes")
 
 class Followers(models.Model):
     follower    = models.ForeignKey(User, null=False, blank=False, verbose_name="Anime", on_delete=models.CASCADE)

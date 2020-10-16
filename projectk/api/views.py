@@ -153,6 +153,15 @@ def AnimeListAllAPI(request):
         if status == '0':
             getList =  AnimeStatus.objects.filter(user=request.user).order_by("status")
             serializer = AnimeStatusSerializer(getList, many=True)
+        elif status == '1':
+            getList = AnimeStatus.objects.filter(user=request.user, status__val=1).order_by("-id")
+            serializer = AnimeStatusSerializer(getList, many=True)
+        elif status == '2':
+            getList = AnimeStatus.objects.filter(user=request.user, status__val=2).order_by("-id")
+            serializer = AnimeStatusSerializer(getList, many=True)
+        elif status == '3':
+            getList = AnimeStatus.objects.filter(user=request.user, status__val=5).order_by("-id")
+            serializer = AnimeStatusSerializer(getList, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
         msg = {}
@@ -160,7 +169,12 @@ def AnimeListAllAPI(request):
         anSt = AnimeStatus.objects.filter(anime=getAnime, user=request.user)
         if request.data['status'] == 1:
             n_episodes = int(request.data['ep_number'])
-            if anSt.count() == 0:
+            if getAnime.episodes_number == None:
+                getStatusWatching = Status.objects.get(val=1)
+                query = AnimeStatus.objects.create(user=request.user, anime=getAnime,
+                                                   status=getStatusWatching, episodes_number=n_episodes, completed=1)
+                msg = {"msg": "Anime Added successfully"}
+            elif anSt.count() == 0:
                 if n_episodes == getAnime.episodes_number or n_episodes > getAnime.episodes_number:
                     getStatusCompleted = Status.objects.get(val=2)
                     query   = AnimeStatus.objects.create(user=request.user, anime=getAnime,
@@ -183,7 +197,9 @@ def AnimeListAllAPI(request):
                     msg = {"msg": "Anime Updated successfully"}
             return Response(msg)
         if request.data['status'] == 2:
-            if anSt.count() == 0:
+            if getAnime.episodes_number == None:
+                msg = {"msg": "Anime can't be added to completed because it hasn't ended yet!"}
+            elif anSt.count() == 0:
                 getStatusCompleted = Status.objects.get(val=2)
                 query = AnimeStatus.objects.create(user=request.user, anime=getAnime,
                                                    status=getStatusCompleted,
@@ -195,6 +211,16 @@ def AnimeListAllAPI(request):
                                     completed=request.data['completed'], episodes_number=0, score=request.data['score'])
                 msg = {"msg":"Anime updated successfully"}
             return Response(msg)
+        if request.data['status'] == 3:
+            if anSt.count() == 0:
+                getStatusPlanToWatch = Status.objects.get(val=2)
+                query = AnimeStatus.objects.create(user=request.user, anime=getAnime, status=getStatusPlanToWatch)
+                msg = {"msg":"Anime added to Plan to Watched."}
+            elif anSt.count() > 0:
+                msg = {"msg": "You are already watching, completed or dropped this anime!"}
+            return Response(msg)
+
+
 
 
 
@@ -382,8 +408,8 @@ def GetUniqueCustomList(request):
     if request.method == 'GET':
         cList = request.GET['id']
         qs = CustomList.objects.get(id=cList)
-        serializer = CustomListSerializer(qs, many=True)
-        Response(serializer.data)
+        serializer = CustomListSerializer(qs, many=False)
+        return Response(serializer.data)
 
 
 @api_view(['POST', 'GET'])
@@ -406,7 +432,7 @@ def AnimeCustomListAPI(request):
     if request.method == 'GET':
         customId = request.GET['id']
         qs = AnimeCustomList.objects.filter(custom_list__id=customId)
-        serializer = CustomListSerializer(qs, many=True)
+        serializer = AnimeCustomListSerializer(qs, many=True)
         return Response(serializer.data)
 
 
