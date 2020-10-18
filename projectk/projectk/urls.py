@@ -26,6 +26,7 @@ urlpatterns = [
     path('signup/user/', SignupAPI, name="signup"),
     path('login/user/', LoginAPI, name="signin"),
     path('login/guard/', LoginGuardAPI, name="loginguard"),
+    path('user/change/profileimage/', ChangeProfileImageAPI, name="changeprofileimage"),
     path('logout/', LogoutAPI, name="logout"),
     path('get/user/profile/', UserDetailsAPI, name="userdetails"),
     path('get/user/profile/extra/', UserExtraDetailsAPI, name="userextradetails"),

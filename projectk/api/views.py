@@ -1,5 +1,5 @@
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.parsers import MultiPartParser
+from rest_framework.parsers import MultiPartParser, JSONParser, FileUploadParser
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated  # <-- Here
 from django.contrib.auth import authenticate, login, logout
@@ -72,6 +72,22 @@ def LoginAPI(request):            # <-- And here
         else:
             message = {"msg": "Some error has occured"}
         return Response(content)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@parser_classes([MultiPartParser, JSONParser, FileUploadParser])
+def ChangeProfileImageAPI(request):
+    if request.method == 'POST':
+        image = request.data['img']
+        msg = {}
+        if image == None:
+            msg = {'msg':'Image is Empty.', 'success':False}
+        else:
+            Profile.objects.filter(user=request.user).update(image=image)
+            msg = {'msg': 'Profile Image successfully updated', 'success':True}
+        return Response(msg)
+
+
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
