@@ -7,14 +7,12 @@ from rest_framework.serializers import ReadOnlyField
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    image = ImageField(read_only=True)
+    user = CurrentUserDefault()
     class Meta:
         model = Profile
         fields = ('id', 'user', 'image')
 
-    def save(self):
-        user = self.context['request'].user
-        image = self.validated_data['image']
+
 
 
 class UserSerializer(serializers.ModelSerializer):
