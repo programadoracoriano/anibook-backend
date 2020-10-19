@@ -77,14 +77,14 @@ def LoginAPI(request):            # <-- And here
 
 
 class ChangeProfileImageAPI(APIView):
-    parser_class            = (FileUploadParser,)
-    authentication_classes  = (SessionAuthentication)
+    parser_class            = (MultiPartParser,)
+    authentication_classes  = (TokenAuthentication)
     def post(self, request, *args, **kwargs):
-
-        serializer = ProfileSerializer(data=request.data)
+        qs = Profile.objects.get(user=request.user)
+        serializer = ProfileSerializer(qs, data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
