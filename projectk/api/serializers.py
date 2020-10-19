@@ -11,8 +11,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ('id', 'user', 'image')
 
-    def save(self):
-        user = self.context['request'].user
+    def save(self, validated_data):
+        user = User.objects.get(id=self.context['request'].user.id,
+                                     **validated_data)
 
 
 class UserSerializer(serializers.ModelSerializer):
