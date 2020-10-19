@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from rest_framework.fields import CurrentUserDefault
+from rest_framework.fields import CurrentUserDefault, ImageField
 
 from .models import *
 from django.contrib.auth.models import User
@@ -7,13 +7,13 @@ from rest_framework.serializers import ReadOnlyField
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    image   = ImageField(read_only=True)
+    user    = CurrentUserDefault()
     class Meta:
         model = Profile
         fields = ('id', 'user', 'image')
 
-    def save(self):
-        user = self.context['request'].user
-        image = self.validated_data['image']
+
 
 
 class UserSerializer(serializers.ModelSerializer):
