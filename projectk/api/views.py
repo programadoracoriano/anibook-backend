@@ -80,12 +80,11 @@ def ChangeProfileImageAPI(request):
     if request.method == 'POST':
         image = request.data['img']
         msg = {}
-        if image == None:
-            msg = {'msg':'Image is Empty.', 'success':False}
-        else:
-            Profile.objects.filter(user=request.user).update(image=image)
-            msg = {'msg': 'Profile Image successfully updated', 'success':True}
-        return Response(msg)
+        serializer = ProfileSerializer(request.data)
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data)
+
 
 
 
