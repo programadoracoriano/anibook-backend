@@ -78,9 +78,8 @@ def LoginAPI(request):            # <-- And here
 @parser_classes([MultiPartParser, JSONParser, FileUploadParser])
 def ChangeProfileImageAPI(request):
     if request.method == 'POST':
-        image = request.data['img']
         msg = {}
-        serializer = ProfileSerializer(request.data)
+        serializer = ProfileSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
         return Response(serializer.data)
