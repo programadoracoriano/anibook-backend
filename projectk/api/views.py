@@ -1,4 +1,4 @@
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.parsers import MultiPartParser, JSONParser, FileUploadParser
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated  # <-- Here
@@ -74,8 +74,8 @@ def LoginAPI(request):            # <-- And here
         return Response(content)
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
-@parser_classes([MultiPartParser, JSONParser, FileUploadParser])
+@authentication_classes([SessionAuthentication])
+@parser_classes([FileUploadParser])
 def ChangeProfileImageAPI(request):
     if request.method == 'POST':
         msg = {}
