@@ -78,16 +78,10 @@ def LoginAPI(request):            # <-- And here
 
 class ChangeProfileImageAPI(APIView):
     parser_class            = (MultiPartParser,)
-    authentication_classes  = (TokenAuthentication)
+    authentication_classes  = (TokenAuthentication,)
     def post(self, request, *args, **kwargs):
-        qs = Profile.objects.get(user=request.user)
-        serializer = ProfileSerializer(qs, data=request.data)
-
-        if serializer.is_valid():
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        qs = Profile.objects.filter(user=request.user).update(image=request.data['image'])
+        return Response({'msg':'Success'})
 
 
 
