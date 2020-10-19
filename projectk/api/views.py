@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated  # <-- Here
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
+from rest_framework.views import APIView
+
 from .models import *
 from .serializers import *
 from django.db.models import Avg, Sum, FloatField, F, Count
@@ -73,16 +75,19 @@ def LoginAPI(request):            # <-- And here
             message = {"msg": "Some error has occured"}
         return Response(content)
 
-@api_view(['POST'])
-@authentication_classes([SessionAuthentication])
-@parser_classes([FileUploadParser])
-def ChangeProfileImageAPI(request):
-    if request.method == 'POST':
-        msg = {}
+
+class ChangeProfileImageAPI(APIView):
+    parser_class            = (FileUploadParser,)
+    authentication_classes  = (SessionAuthentication)
+    def post(self, request, *args, **kwargs):
+
         serializer = ProfileSerializer(data=request.data)
+
         if serializer.is_valid():
             serializer.save()
-        return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
