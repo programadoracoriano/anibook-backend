@@ -14,7 +14,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class DefaultAvatarSerializer(serializers.ModelSerializer):
     class Meta:
         model = DefaultAvatar
-        fields = ('id', 'tag', 'image',)
+        fields = ('id', 'tag', 'image')
 
 
 class UserSerializer(serializers.ModelSerializer):

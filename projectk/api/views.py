@@ -80,7 +80,7 @@ def LoginAPI(request):            # <-- And here
 def DefaulAvatarAPI(request):
     if request.method == 'GET':
         getAv = DefaultAvatar.objects.order_by("id")
-        serializer = DefaultAvatarSerializer(getAv)
+        serializer = DefaultAvatarSerializer(getAv, many=True)
         return Response(serializer.data)
     if request.method == 'POST':
         avId = request.data['avatar']
@@ -92,12 +92,6 @@ def DefaulAvatarAPI(request):
             qs = Profile.objects.filter(user=request.user).update(image=instanceAv.image)
             msg = {"msg": "Avatar Changed Successfully!"}
         return Response(msg)
-
-
-
-
-
-
 
 
 @api_view(['GET'])
