@@ -10,8 +10,11 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         exclude = ['user']
-        fields = ('id', 'image')
 
+    def update(self, instance, validated_data):
+        instance.email = validated_data.get('image', instance.image)
+        instance.save()
+        return instance
 
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True, many=False)
