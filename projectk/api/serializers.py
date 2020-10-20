@@ -8,8 +8,8 @@ from rest_framework.serializers import ReadOnlyField
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Profile
-        exclude = ['user']
+        model   = Profile
+        fields  = ('id', 'user', 'image',)
 
     def update(self, instance, validated_data):
         instance.email = validated_data.get('image', instance.image)
