@@ -11,10 +11,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         model   = Profile
         fields  = ('id', 'user', 'image',)
 
-    def update(self, instance, validated_data):
-        instance.email = validated_data.get('image', instance.image)
-        instance.save()
-        return instance
 
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True, many=False)
