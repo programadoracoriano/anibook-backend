@@ -81,12 +81,10 @@ class ChangeProfileImageAPI(APIView):
     authentication_classes  = (TokenAuthentication,)
     def post(self, request, *args, **kwargs):
 
-        serializer = ProfileSerializer(data=request.data, context={
-        'request': request
-    })
+        serializer = ProfileSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
