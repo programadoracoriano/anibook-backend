@@ -75,15 +75,27 @@ def LoginAPI(request):            # <-- And here
             message = {"msg": "Some error has occured"}
         return Response(content)
 
-
-class ChangeProfileImageAPI(APIView):
-    parser_class            = (FileUploadParser,)
-    authentication_classes  = (TokenAuthentication,)
-    def post(self, request, *args, **kwargs):
-        serializer = ProfileSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
+@api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
+def DefaulAvatarAPI(request):
+    if request.method == 'GET':
+        getAv = DefaultAvatar.objects.order_by("id")
+        serializer = DefaultAvatarSerializer(getAv)
         return Response(serializer.data)
+    if request.method == 'POST':
+        avId = request.data['avatar']
+        instanceAv = DefaultAvatar.objects.get(id=avId)
+        msg = {}
+        if avId == None:
+            msg = {"msg":"No Avatar has been Selected"}
+        else:
+            qs = Profile.objects.filter(user=request.user).update(image=instanceAv.image)
+            msg = {"msg": "Avatar Changed Successfully!"}
+        return Response(msg)
+
+
+
+
 
 
 

@@ -11,8 +11,10 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ('id', 'user', 'image')
 
-    def save(self):
-        user = self.context['request'].user
+class DefaultAvatarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DefaultAvatar
+        fields = ('id', 'tag', 'image',)
 
 
 class UserSerializer(serializers.ModelSerializer):
