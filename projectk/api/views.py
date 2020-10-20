@@ -80,9 +80,10 @@ class ChangeProfileImageAPI(APIView):
     parser_class            = (MultiPartParser,)
     authentication_classes  = (TokenAuthentication,)
     def post(self, request, *args, **kwargs):
-        image = request.data['image']
-        qs = Profile.objects.filter(user=self.request.user).update(image=image)
-        return Response({"success":True})
+        serializer = ProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data)
 
 
 

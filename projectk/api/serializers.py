@@ -7,9 +7,10 @@ from rest_framework.serializers import ReadOnlyField
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    user = CurrentUserDefault()
     class Meta:
         model   = Profile
-        fields  = ('id', 'user', 'image',)
+        fields  = ('id', 'user', 'image')
 
 
 class UserSerializer(serializers.ModelSerializer):
