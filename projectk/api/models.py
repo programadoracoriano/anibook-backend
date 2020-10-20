@@ -20,6 +20,14 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
+class DefaultAvatar(models.Model):
+    tag     = models.CharField(max_length=75, null=False, blank=False, verbose_name="Characters")
+    image   = ResizedImageField(size=[200, 200], quality=80, keep_meta=False,
+                        upload_to='avatar', force_format='JPEG',
+                        default='profile/user-placeholder.png', null=True)
+    def __str__(self):
+        return self.tag
+
 
 class Categorie(models.Model):
     categorie = models.CharField(max_length=75, null=False, blank=False, verbose_name="Categorie")

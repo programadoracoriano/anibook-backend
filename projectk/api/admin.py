@@ -47,6 +47,11 @@ class AnimeAdmin(admin.ModelAdmin):
     filter_horizontal = ('categorie', 'producers', 'licensors', 'studio', 'alternative_title')
     search_fields = ('id','name', )
 
+class DefaultAvatarAdmin(admin.ModelAdmin):
+    model = DefaultAvatar
+    list_display = ('tag',)
+    search_fields = ('id', 'tag',)
+
 
 
 
@@ -64,5 +69,6 @@ admin.site.register(Studio, StudioAdmin)
 admin.site.register(Anime, AnimeAdmin)
 admin.site.register(AnimeStatus)
 admin.site.register(Status)
+admin.site.register(DefaultAvatar, DefaultAvatarAdmin)
 
 

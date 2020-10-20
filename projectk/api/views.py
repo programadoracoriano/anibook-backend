@@ -80,9 +80,7 @@ class ChangeProfileImageAPI(APIView):
     parser_class            = (FileUploadParser,)
     authentication_classes  = (TokenAuthentication,)
     def post(self, request, *args, **kwargs):
-        serializer = ProfileSerializer(data=request.data, context={
-            'request': request
-        })
+        serializer = ProfileSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
         return Response(serializer.data)

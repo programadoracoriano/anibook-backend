@@ -7,14 +7,12 @@ from rest_framework.serializers import ReadOnlyField
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    user = CurrentUserDefault()
     class Meta:
-        model   = Profile
-        fields  = ('id', 'user', 'image')
+        model = Profile
+        fields = ('id', 'user', 'image')
 
-    def save(self, validated_data):
-        user = User.objects.get(id=self.context['request'].user.id,
-                                **validated_data)
+    def save(self):
+        user = self.context['request'].user
 
 
 class UserSerializer(serializers.ModelSerializer):
