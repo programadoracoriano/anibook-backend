@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from .models import *
 from .serializers import *
 from django.db.models import Avg, Sum, FloatField, F, Count
-from rest_framework import status, views
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes, parser_classes
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import base64
@@ -76,13 +76,13 @@ def LoginAPI(request):            # <-- And here
         return Response(content)
 
 
-class ChangeProfileImageAPI(views.APIView):
+class ChangeProfileImageAPI(APIView):
     parser_class            = (MultiPartParser,)
     authentication_classes  = (TokenAuthentication,)
-    def put(self, request, filename, format=None):
-        file_obj = request.data['image']
-        qs = Profile.objects.filter(user=self.request.user).update(image=file_obj)
-        return Response(status=204)
+    def post(self, request, *args, **kwargs):
+        image = request.data['image']
+        qs = Profile.objects.filter(user=self.request.user).update(image=image)
+        return Response({"success":True})
 
 
 

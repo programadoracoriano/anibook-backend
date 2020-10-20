@@ -8,7 +8,7 @@ from django.dispatch import receiver
 class Profile(models.Model):
   user        = models.OneToOneField(User, on_delete=models.CASCADE)
   image       = ResizedImageField(size=[200, 200], quality=80, keep_meta=False,
-                            upload_to='profile', force_format='JPEG',
+                            upload_to='media/profile/', force_format='JPEG',
   default='profile/user-placeholder.png', null=True)
 
 @receiver(post_save, sender=User)
