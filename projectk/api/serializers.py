@@ -10,7 +10,12 @@ class ProfileSerializer(serializers.ModelSerializer):
     user = CurrentUserDefault()
     class Meta:
         model   = Profile
-        fields  = ('id', 'user', 'image')
+        exclude = ['user']
+
+    def update(self, instance, validated_data):
+        instance.image = validated_data.get('image', instance.image)
+        instance.save()
+        return instance
 
 
 class UserSerializer(serializers.ModelSerializer):

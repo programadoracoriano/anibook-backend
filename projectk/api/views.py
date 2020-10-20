@@ -77,7 +77,7 @@ def LoginAPI(request):            # <-- And here
 
 
 class ChangeProfileImageAPI(APIView):
-    parser_class            = (MultiPartParser,)
+    parser_class            = (FileUploadParser,)
     authentication_classes  = (TokenAuthentication,)
     def post(self, request, *args, **kwargs):
         serializer = ProfileSerializer(data=request.data)
