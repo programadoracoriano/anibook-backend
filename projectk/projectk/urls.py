@@ -49,5 +49,8 @@ urlpatterns = [
     path('search/by/season/', SeasonSearchAPI, name="searchseason"),
     path('search/by/genre/', SearchByGenreAPI, name="searchbygenre"),
     path('get/genres/', GetGenresAPI, name="getgenres"),
+
+    #Delete Urls
+    path('delete/customlist/', DeleteCustomListAPI, name="deletecustomlist"),
     path('api-token-auth/', views.obtain_auth_token)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

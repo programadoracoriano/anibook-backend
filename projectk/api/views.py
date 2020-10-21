@@ -472,6 +472,20 @@ def PublicCustomListAPI(request):
 
 
 
+#begin delete section
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def DeleteCustomListAPI(request):
+    if request.method == 'GET':
+        id = request.GET['id']
+        qs = CustomList.objects.filter(id=request.GET['id'], user=request.user).delete()
+        query = CustomList.objects.filter(user=request.user).order_by("-id")
+        serializer = CustomListSerializer(query, many=True)
+        return Response(serializer.data)
+
+
+#end delete section
+
 
 
 
