@@ -457,6 +457,19 @@ def AnimeCustomListAPI(request):
         return Response(serializer.data)
 
 
+@api_view(['GET'])
+@authentication_classes([])
+def PublicCustomListAPI(request):
+    if request.method == 'GET':
+        status = request.GET['status']
+        qs = ''
+        if status == '0':
+            qs = CustomList.objects.order_by("?")[:4]
+        elif status == '1':
+            qs = CustomList.objects.order_by("-id")[:4]
+        serializer = CustomListSerializer(qs, many=True)
+        return Response(serializer.data)
+
 
 
 
