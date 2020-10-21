@@ -70,5 +70,6 @@ admin.site.register(Anime, AnimeAdmin)
 admin.site.register(AnimeStatus)
 admin.site.register(Status)
 admin.site.register(DefaultAvatar, DefaultAvatarAdmin)
+admin.site.register(CustomList)
 
 
