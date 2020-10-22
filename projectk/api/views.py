@@ -165,6 +165,28 @@ def AnimeDetailsAPI(request):
         serializer = AnimeSerializer(getAnime)
     return Response(serializer.data)
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def PublicAnimeListAPI(request):
+    if request.method == 'GET':
+        status = request.GET['status']
+        userId = request.GET['userId']
+        serializer = ''
+        if status == '0':
+            getList = AnimeStatus.objects.filter(user__id=userId).order_by("status")
+            serializer = AnimeStatusSerializer(getList, many=True)
+        elif status == '1':
+            getList = AnimeStatus.objects.filter(user__id=userId, status__val=1).order_by("-id")
+            serializer = AnimeStatusSerializer(getList, many=True)
+        elif status == '2':
+            getList = AnimeStatus.objects.filter(user__id=userId, status__val=2).order_by("-id")
+            serializer = AnimeStatusSerializer(getList, many=True)
+        elif status == '3':
+            getList = AnimeStatus.objects.filter(user__id=userId, status__val=5).order_by("-id")
+            serializer = AnimeStatusSerializer(getList, many=True)
+        return Response(serializer.data)
+
+
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def AnimeListAllAPI(request):

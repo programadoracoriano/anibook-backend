@@ -41,6 +41,7 @@ urlpatterns = [
     path('anime/customlist/', AnimeCustomListAPI, name="animecustomlist"),
     path('get/public/customlist/', PublicCustomListAPI, name="publiccustomlist"),
     path('get/unique/customlist/', GetUniqueCustomList, name="ucustomlist"),
+    path('list/public/anime/', PublicAnimeListAPI, name="listpublicanime"),
     path('get/anime/list/', AnimeListAPI, name="listanimes"),
     path('get/anime/details/', AnimeDetailsAPI, name="animedetails"),
     path('get/anime/score/', GetScoreAPI, name="animescore"),
