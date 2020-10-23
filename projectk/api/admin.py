@@ -45,7 +45,7 @@ class AnimeAdmin(admin.ModelAdmin):
     model = Anime
     list_display = ('name', 'aired', )
     filter_horizontal = ('categorie', 'producers', 'licensors', 'studio', 'alternative_title')
-    search_fields = ('id','name', )
+    search_fields = ('id','name', 'aired__day' )
 
 class DefaultAvatarAdmin(admin.ModelAdmin):
     model = DefaultAvatar

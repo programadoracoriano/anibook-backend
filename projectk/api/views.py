@@ -296,7 +296,7 @@ def GetGenresAPI(request):
 def SearchByGenreAPI(request):
     if request.method == 'GET':
         genre   = request.GET['genre']
-        qs      = Anime.objects.filter(categorie__in=genre)
+        qs      = Anime.objects.filter(categorie__id=genre)
         page = request.GET.get('page', 1)
         paginator = Paginator(qs, 15)
         try:

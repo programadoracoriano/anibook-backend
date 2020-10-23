@@ -71,8 +71,13 @@ class Rating(models.Model):
     def __str__(self):
         return self.rating
 
+class DateOption(models.Model):
+    tag     = models.CharField(max_length=150, null=False, blank=False, verbose_name="Date Option")
+    def __str__(self):
+        return self.tag
+
 class Anime(models.Model):
-    image               = ResizedImageField(null=True, blank=False, size=[800, 600], keep_meta=False, quality=80, upload_to='anime',
+    image               =   ResizedImageField(null=True, blank=False, size=[800, 600], keep_meta=False, quality=80, upload_to='anime',
                               force_format='JPEG')
     name                =   models.CharField(max_length=300, null=False, blank=False, verbose_name="Anime Name")
     alternative_title   =   models.ManyToManyField(AlternativeTitle, blank=True, verbose_name="Alternative Title")
