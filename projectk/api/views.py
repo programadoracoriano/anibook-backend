@@ -489,6 +489,9 @@ def PublicCustomListAPI(request):
             qs = CustomList.objects.order_by("?")[:4]
         elif status == '1':
             qs = CustomList.objects.order_by("-id")[:4]
+        elif status == '2':
+            user = request.GET['user']
+            qs = CustomList.objects.filter(user__id=user)
         serializer = CustomListSerializer(qs, many=True)
         return Response(serializer.data)
 
