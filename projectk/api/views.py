@@ -256,14 +256,34 @@ def AnimeListAllAPI(request):
             return Response(msg)
         if request.data['status'] == 3:
             if anSt.count() == 0:
-                getStatusPlanToWatch = Status.objects.get(val=2)
+                getStatusPlanToWatch = Status.objects.get(val=3)
                 query = AnimeStatus.objects.create(user=request.user, anime=getAnime, status=getStatusPlanToWatch)
-                msg = {"msg":"Anime added to Plan to Watched."}
+                msg = {"msg":"Anime added to Plan to Watch."}
             elif anSt.count() > 0:
                 msg = {"msg": "You are already watching, completed or dropped this anime!"}
             return Response(msg)
 
 
+@api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
+def AnimeNoteAPI(request):
+    if request.method == 'GET':
+        id = request.GET['note']
+        serializer = ''
+        if id is not None:
+            qs = AnimeStatus.objects.get(id=id)
+            serializer = AnimeStatusSerializer(qs, many=False)
+        return Response(serializer.data)
+    if request.method == 'POST':
+        note = request.data['note']
+        id  = request.data['id']
+        msg = {}
+        if note is not None:
+            qs = AnimeStatus.objects.filter(id=id).update(note=note)
+            msg = {"msg":"Note Updated Successfully"}
+        else:
+            msg = {"msg":"Note is Empty"}
+        return Response(msg)
 
 
 

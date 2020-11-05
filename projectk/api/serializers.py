@@ -84,7 +84,7 @@ class AnimeStatusSerializer(serializers.ModelSerializer):
     status  = StatusSerializer(read_only=True, many=False)
     class Meta:
         model   = AnimeStatus
-        fields  = ('anime' , 'user', 'episodes_number', 'completed', 'status', 'score')
+        fields  = ('id', 'anime' , 'user', 'episodes_number', 'completed', 'status', 'score', 'note',)
 
 class FollowerSerializer(serializers.ModelSerializer):
     follower    = UserSerializer(read_only=True, many=False)

@@ -84,6 +84,7 @@ class Anime(models.Model):
     type                =   models.ForeignKey(AnimeType, null=True, blank=True, verbose_name="Type", on_delete=models.CASCADE)
     episodes_number     =   models.IntegerField(null=True, blank=True, verbose_name="Number of Episodes")
     minutes_per_episode =   models.IntegerField(null=True, blank=True, verbose_name="Minutes per Episode")
+    date_option         =   models.ForeignKey(DateOption, null=True, blank=True, verbose_name="Date Option(Aired)", on_delete=models.CASCADE)
     aired               =   models.DateField(verbose_name="Aired", null=True, blank=True)
     date_end            =   models.DateField(verbose_name="End Date", null=True, blank=True)
     producers           =   models.ManyToManyField(Producer, blank=True, verbose_name="Producers")

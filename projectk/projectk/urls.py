@@ -46,6 +46,7 @@ urlpatterns = [
     path('get/anime/details/', AnimeDetailsAPI, name="animedetails"),
     path('get/anime/score/', GetScoreAPI, name="animescore"),
     path('anime/list/all/', AnimeListAllAPI, name="allanimelist"),
+    path('anime/note/', AnimeNoteAPI, name="animenote"),
     path('search/all/', AnimeSearchAPI, name="search"),
     path('search/by/season/', SeasonSearchAPI, name="searchseason"),
     path('search/by/genre/', SearchByGenreAPI, name="searchbygenre"),

@@ -43,9 +43,11 @@ class StudioAdmin(admin.ModelAdmin):
 
 class AnimeAdmin(admin.ModelAdmin):
     model = Anime
-    list_display = ('name', 'aired', )
+    ordering = ('-id',)
+    date_hierarchy = 'aired'
+    list_display = ('name', 'aired',)
     filter_horizontal = ('categorie', 'producers', 'licensors', 'studio', 'alternative_title')
-    search_fields = ('id','name', 'aired__day' )
+    search_fields = ('id', 'name', 'aired__day')
 
 class DefaultAvatarAdmin(admin.ModelAdmin):
     model = DefaultAvatar
@@ -71,5 +73,6 @@ admin.site.register(AnimeStatus)
 admin.site.register(Status)
 admin.site.register(DefaultAvatar, DefaultAvatarAdmin)
 admin.site.register(CustomList)
+admin.site.register(DateOption)
 
 
