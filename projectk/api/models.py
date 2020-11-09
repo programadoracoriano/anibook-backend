@@ -94,9 +94,28 @@ class Anime(models.Model):
     categorie           =   models.ManyToManyField(Categorie, blank=True, verbose_name="Genre")
     rating              =   models.ForeignKey(Rating, null=True, blank=True,  verbose_name="Rating", on_delete=models.CASCADE)
     sinopse             =   models.TextField(max_length=800, blank=True, null=False, verbose_name="Synopsis")
+    trailer             =   models.CharField(max_length=100, blank=True, null=True, verbose_name="Trailer(Youtube ID)")
 
     def __str__(self):
         return self.name
+
+class AnimeReview(models.Model):
+    anime   = models.ForeignKey(Anime, null=True, blank=True, verbose_name="Anime", on_delete=models.CASCADE)
+    user    = models.ForeignKey(User, null=True, blank=True, verbose_name="User", on_delete=models.CASCADE)
+    review  = models.TextField(max_length=5000, null=False, blank=False, verbose_name="Review")
+    date    = models.DateField(auto_now=True)
+
+class TopicCategorie(models.Model):
+    categorie = models.CharField(max_length=150, null=False, blank=False, verbose_name="Categorie")
+    def __str__(self):
+        return self.categorie
+
+class Topic(models.Model):
+    user        = models.ForeignKey(User, null=True, blank=True, verbose_name="User", on_delete=models.CASCADE)
+    categorie   = models.ForeignKey(TopicCategorie, null=True, blank=True, verbose_name="User", on_delete=models.CASCADE)
+    title       = models.CharField(max_length=150, null=False, blank=False, verbose_name="title")
+    description = models.TextField(max_length=5000, null=False, blank=False, verbose_name="Description")
+    date        = models.DateField(auto_now=True)
 
 class Status(models.Model):
     val = models.IntegerField(null=False, blank=False, verbose_name="Value")

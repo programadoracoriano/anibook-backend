@@ -70,7 +70,7 @@ class AnimeSerializer(serializers.ModelSerializer):
     class Meta:
         model   = Anime
         fields  = ('id', 'name', 'episodes_number', 'minutes_per_episode', 'aired','sinopse', 'image', 'studio', 'categorie',
-                  'rating', 'type', 'source', 'licensors', 'producers',)
+                  'rating', 'type', 'source', 'licensors', 'producers', 'trailer')
 
 class StatusSerializer(serializers.ModelSerializer):
     class Meta:
@@ -103,6 +103,28 @@ class AnimeCustomListSerializer(serializers.ModelSerializer):
     class Meta:
         model   = AnimeCustomList
         fields  = ('id' , 'anime')
+
+
+class AnimeReviewSerializer(serializers.ModelSerializer):
+    anime   = AnimeSerializer(read_only=True, many=False)
+    user    = UserSerializer(read_only=True, many=False)
+    class Meta:
+        model   = AnimeReview
+        fields  = ('id', 'anime', 'user', 'review', 'date')
+
+class TopicCategorieSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True, many=False)
+    class Meta:
+        model   = TopicCategorie
+        fields  = ('id' , 'categorie')
+
+
+class TopicSerializer(serializers.ModelSerializer):
+    user        = UserSerializer(read_only=True, many=False)
+    categorie   = TopicCategorieSerializer(read_only=True, many=False)
+    class Meta:
+        model   = TopicCategorie
+        fields  = ('id' , 'user', 'categorie', 'title', 'description', 'date')
 
 
 
