@@ -18,7 +18,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 @authentication_classes([])
 def AnimeSearchAPI(request):
     if request.method == 'GET':
-        anime = Anime.objects.filter(name__icontains=request.GET['search'])
+        anime = Anime.objects.filter(name__icontains=str(request.GET['search']))
         page = request.GET.get('page', 1)
         paginator = Paginator(anime, 15)
         try:

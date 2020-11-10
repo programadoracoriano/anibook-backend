@@ -141,6 +141,18 @@ def AnimeListAllAPI(request):
                 msg = {"msg": "Anime updated to dropped status!"}
             return Response(msg)
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def getStatusAPI(request):
+    if request.method == 'GET':
+        id          = request.GET['id']
+        anime       = Anime.objects.get(id=id)
+        qs          = AnimeStatus.objects.get(user=request.user, anime=anime)
+        serializer  = AnimeStatusSerializer(qs, many=False)
+        return Response(serializer.data)
+
+
+
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def AnimeNoteAPI(request):
@@ -175,17 +187,24 @@ def GetScoreAPI(request):
 @authentication_classes([TokenAuthentication])
 def CustomListAPI(request):
     if request.method == 'POST':
-        msg = {}
-        title = request.data['title']
-        mainA = request.data['main']
-        getAnime = Anime.objects.get(id=mainA)
-        if len(title) < 6 or len(title) > 100:
-            msg = {'msg': 'The title needs to be between 6 to 100 characters'}
+        title       = None
+        mainA       = None
+        msg         = {}
+        serializer  = None
+        if 'title' in request.data:
+            title = request.data['title']
+        if 'main' in request.data:
+            mainA = request.data['main']
+        if len(title) < 0 or len(title) > 100:
+            msg = {{'msg':'You only can use 6 to 100 characters on title'}, {'msg':None}}
         elif mainA == None:
-            msg = {'msg': 'Select a image!'}
+            msg = {{'msg': 'You Need to select a anime for thumbnail'}, {'msg':None}}
         else:
-            qs = CustomList.objects.create(user=request.user, title=title, image=getAnime.image)
-            msg = {'msg': 'Custom List Created Successfully'}
+            getAnime        = Anime.objects.get(id=mainA)
+            qs              = CustomList.objects.create(user=request.user, title=title, image=getAnime.image)
+            query           = CustomList.objects.filter(user=request.user).order_by("-id")
+            serializer      = CustomListSerializer(query, many=True)
+            msg             = serializer.data
         return Response(msg)
     if request.method == 'GET':
         qs = CustomList.objects.filter(user=request.user).order_by("-id")
@@ -211,6 +230,7 @@ def AnimeCustomListAPI(request):
         getCList    = CustomList.objects.get(id=cList)
         getAnime    = Anime.objects.get(id=animeId)
         msg         = {}
+
         if cList == None:
             msg = {'msg':'Something Bad Happened!'}
         elif animeId == None:
@@ -251,4 +271,26 @@ def DeleteCustomListAPI(request):
         qs = CustomList.objects.filter(id=request.GET['id'], user=request.user).delete()
         query = CustomList.objects.filter(user=request.user).order_by("-id")
         serializer = CustomListSerializer(query, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def DeleteItemFromListAPI(request):
+    if request.method == 'GET':
+        status      = request.GET['status']
+        id          = request.GET['id']
+        qs          = AnimeStatus.objects.filter(id=request.GET['id'], user=request.user).delete()
+        serializer  = ''
+        if status == '0':
+            getList = AnimeStatus.objects.filter(user=request.user).order_by("status")
+            serializer = AnimeStatusSerializer(getList, many=True)
+        elif status == '1':
+            getList = AnimeStatus.objects.filter(user=request.user, status__val=1).order_by("-id")
+            serializer = AnimeStatusSerializer(getList, many=True)
+        elif status == '2':
+            getList = AnimeStatus.objects.filter(user=request.user, status__val=2).order_by("-id")
+            serializer = AnimeStatusSerializer(getList, many=True)
+        elif status == '3':
+            getList = AnimeStatus.objects.filter(user=request.user, status__val=5).order_by("-id")
+            serializer = AnimeStatusSerializer(getList, many=True)
         return Response(serializer.data)
