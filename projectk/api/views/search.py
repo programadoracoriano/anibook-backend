@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 
 from ..models import *
 from ..serializers import *
-from django.db.models import Avg, Sum, FloatField, F, Count
+from django.db.models import Avg, Sum, FloatField, F, Count, Q
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes, parser_classes
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -18,16 +18,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 @authentication_classes([])
 def AnimeSearchAPI(request):
     if request.method == 'GET':
-        anime = Anime.objects.filter(name__icontains=str(request.GET['search']))
-        page = request.GET.get('page', 1)
-        paginator = Paginator(anime, 15)
-        try:
-            animes = paginator.page(page)
-        except PageNotAnInteger:
-            animes = paginator.page(1)
-        except EmptyPage:
-            animes = paginator.page(paginator.num_pages)
-        serializer = AnimeSerializer(animes, many=True)
+        anime = Anime.objects.filter(name__icontains=str(request.GET['search'])) | \
+                                     Anime.objects.filter(alternative_title__title__icontains=str(request.GET['search']))
+        cquery = anime.order_by("name").distinct()
+        serializer = AnimeSerializer(cquery, many=True)
         return Response(serializer.data)
 
 @api_view(['GET'])
@@ -44,15 +38,7 @@ def SearchByGenreAPI(request):
     if request.method == 'GET':
         genre   = request.GET['genre']
         qs      = Anime.objects.filter(categorie__id=genre)
-        page = request.GET.get('page', 1)
-        paginator = Paginator(qs, 15)
-        try:
-            animes = paginator.page(page)
-        except PageNotAnInteger:
-            animes = paginator.page(1)
-        except EmptyPage:
-            animes = paginator.page(paginator.num_pages)
-        serializer = AnimeSerializer(animes, many=True)
+        serializer = AnimeSerializer(qs, many=True)
         return Response(serializer.data)
 
 @api_view(['GET'])
@@ -63,7 +49,7 @@ def SeasonSearchAPI(request):
         spring = ['04', '05', '06']
         summer = ['07', '08', '09']
         fall = ['10', '11', '12']
-        anime = ''
+        anime = None
         season = request.GET['season']
         year = request.GET['year']
         if season == 'winter':
@@ -74,15 +60,7 @@ def SeasonSearchAPI(request):
             anime = Anime.objects.filter(aired__month__in=summer, aired__year=year)
         elif season == 'fall':
             anime = Anime.objects.filter(aired__month__in=fall, aired__year=year)
-        page = request.GET.get('page', 1)
-        paginator = Paginator(anime, 15)
-        try:
-            animes = paginator.page(page)
-        except PageNotAnInteger:
-            animes = paginator.page(1)
-        except EmptyPage:
-            animes = paginator.page(paginator.num_pages)
-        serializer = AnimeSerializer(animes, many=True)
+        serializer = AnimeSerializer(anime, many=True)
         return Response(serializer.data)
 
 @api_view(['GET'])

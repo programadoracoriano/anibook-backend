@@ -72,6 +72,9 @@ def AnimeListAllAPI(request):
         elif status == '3':
             getList = AnimeStatus.objects.filter(user=request.user, status__val=5).order_by("-id")
             serializer = AnimeStatusSerializer(getList, many=True)
+        elif status == '4':
+            getList = AnimeStatus.objects.filter(user=request.user, status__val=3).order_by("-id")
+            serializer = AnimeStatusSerializer(getList, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
         msg = {}
@@ -147,8 +150,8 @@ def getStatusAPI(request):
     if request.method == 'GET':
         id          = request.GET['id']
         anime       = Anime.objects.get(id=id)
-        qs          = AnimeStatus.objects.get(user=request.user, anime=anime)
-        serializer  = AnimeStatusSerializer(qs, many=False)
+        qs          = AnimeStatus.objects.filter(user=request.user, anime=anime)
+        serializer  = AnimeStatusSerializer(qs, many=True)
         return Response(serializer.data)
 
 
