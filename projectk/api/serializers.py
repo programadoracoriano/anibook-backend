@@ -60,17 +60,20 @@ class SourceSerializer(serializers.ModelSerializer):
         fields  = ('id', 'source',)
 
 class AnimeSerializer(serializers.ModelSerializer):
-    categorie   = CategorieSerializer(read_only=True, many=True)
-    studio      = StudioSerializer(read_only=True, many=True)
-    rating      = RatingSerializer(read_only=True)
-    type        = AnimeTypeSerializer(read_only=True)
-    source      = SourceSerializer(read_only=True)
-    licensors    = LicensorSerializer(read_only=True, many=True)
-    producers    = ProducerSerializer(read_only=True, many=True)
+    categorie       = CategorieSerializer(read_only=True, many=True)
+    studio          = StudioSerializer(read_only=True, many=True)
+    rating          = RatingSerializer(read_only=True)
+    type            = AnimeTypeSerializer(read_only=True)
+    source          = SourceSerializer(read_only=True)
+    licensors       = LicensorSerializer(read_only=True, many=True)
+    producers       = ProducerSerializer(read_only=True, many=True)
+
     class Meta:
         model   = Anime
-        fields  = ('id', 'name', 'episodes_number', 'minutes_per_episode', 'aired','sinopse', 'image', 'studio', 'categorie',
+        fields  = ('id', 'name', 'episodes_number', 'minutes_per_episode', 'aired','sinopse', 'image_url', 'studio', 'categorie',
                   'rating', 'type', 'source', 'licensors', 'producers', 'trailer')
+
+
 
 class StatusSerializer(serializers.ModelSerializer):
     class Meta:
