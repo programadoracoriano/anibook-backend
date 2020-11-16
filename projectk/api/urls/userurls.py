@@ -28,5 +28,7 @@ urlpatterns = [
 
     #reviews and topics urls
     path('get/reviews/', AnimeReviewAPI, name="animereview"),
+    path('get/all/reviews/', getAllReviewsAPI, name="getallreviews"),
+    path('show/review/', getReviewAPI, name="showreview"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

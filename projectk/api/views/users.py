@@ -32,16 +32,20 @@ def SignupAPI(request):
     if request.method == 'POST':
         msg = {}
         username = request.data['username']
+        email    = request.data['email']
         password = request.data['password']
         getUsers = User.objects.filter(username=username)
+        getEmail = User.objects.filter(email=email)
         if getUsers.count() > 0:
-            msg = {'msg':'User Already Exists!Please choose other username!', 'success':False}
+            msg = {'msg':'User already exists!Please choose other username!', 'success':False}
+        elif getEmail.count() > 0:
+            msg = {'msg':'E-mail already exists!Please choose another e-mail!', 'success':False}
         elif len(username) < 6 or len(username)> 20:
             msg = {'msg': 'Your username needs to be 6 to 20 characters.', 'success':False}
         elif len(password) < 8 or len(password)>16:
             msg = {'msg': 'Your passwords needs to be 8 to 16 characters.', 'success':False}
         else:
-            qs = User.objects.create_user(username=username, password=password)
+            qs = User.objects.create_user(username=username, email=email, password=password)
             msg = {'msg': 'User created successfully!', 'success':True}
         return Response(msg)
 
@@ -226,6 +230,24 @@ def AnimeReviewAPI(request):
         else:
             msg = {"msg": "You need to write a review!"}
         return Response(msg)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def getAllReviewsAPI(request):
+    if request.method == 'GET':
+        id          = request.GET['id']
+        qs          = AnimeReview.objects.filter(anime__id=id)
+        serializer  = AnimeReviewSerializer(qs, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def getReviewAPI(request):
+    if request.method == 'GET':
+        id          = request.GET['id']
+        qs          = AnimeReview.objects.get(id=id)
+        serializer  = AnimeReviewSerializer(qs)
+        return Response(serializer.data)
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])

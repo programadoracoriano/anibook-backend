@@ -5,6 +5,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 # Create your models here.
+from django.conf import settings
+
+
 class Profile(models.Model):
   user        = models.OneToOneField(User, on_delete=models.CASCADE)
   image       = ResizedImageField(size=[200, 200], quality=80, keep_meta=False,
@@ -95,6 +98,10 @@ class Anime(models.Model):
     rating              =   models.ForeignKey(Rating, null=True, blank=True,  verbose_name="Rating", on_delete=models.CASCADE)
     sinopse             =   models.TextField(max_length=800, blank=True, null=False, verbose_name="Synopsis")
     trailer             =   models.CharField(max_length=100, blank=True, null=True, verbose_name="Trailer(Youtube ID)")
+
+    @property
+    def image_url(self):
+        return "{0}{1}".format('http://192.168.1.80:8000', self.image.url)
 
     def __str__(self):
         return self.name
