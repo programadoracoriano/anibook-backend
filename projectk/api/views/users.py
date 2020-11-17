@@ -220,11 +220,15 @@ def AnimeReviewAPI(request):
         serializer = AnimeReviewSerializer(qs, many=True)
         return Response(serializer.data)
     if request.method == 'POST':
-        id  = request.data['id']
-        rev = request.data['review']
-        msg = {}
-        if rev is not None:
-            anime       = Anime.objects.get(id=id)
+        id          = request.data['id']
+        rev         = request.data['review']
+        msg         = {}
+        anime = Anime.objects.get(id=id)
+        countRev    = AnimeReview.objects.filter(anime__id=id, user=request.user)
+        if countRev.count() > 0 and rev is not None:
+            qs  = countRev.update(review=rev)
+            msg = {"msg": "Review Updated Successfully"}
+        elif countRev.count() == 0 and rev is not None:
             qs          = AnimeReview.objects.create(anime=anime, user=request.user, review=rev)
             msg         = {"msg":"Review Added Successfully"}
         else:

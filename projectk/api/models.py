@@ -101,7 +101,7 @@ class Anime(models.Model):
 
     @property
     def image_url(self):
-        return "{0}{1}".format('http://192.168.1.80:8000', self.image.url)
+        return "{0}{1}".format(settings.SITE_URL, self.image.url)
 
     def __str__(self):
         return self.name
