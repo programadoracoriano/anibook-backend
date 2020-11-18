@@ -9,12 +9,12 @@ from rest_framework.serializers import ReadOnlyField
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ('id', 'user', 'image')
+        fields = ('id', 'user', 'image_url')
 
 class DefaultAvatarSerializer(serializers.ModelSerializer):
     class Meta:
         model = DefaultAvatar
-        fields = ('id', 'tag', 'image')
+        fields = ('id', 'tag', 'image_url')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -99,7 +99,7 @@ class CustomListSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True, many=False)
     class Meta:
         model   = CustomList
-        fields  = ('id', 'user' , 'title', 'image')
+        fields  = ('id', 'user' , 'title', 'image_url')
 
 class AnimeCustomListSerializer(serializers.ModelSerializer):
     anime = AnimeSerializer(read_only=True, many=False)
@@ -111,9 +111,10 @@ class AnimeCustomListSerializer(serializers.ModelSerializer):
 class AnimeReviewSerializer(serializers.ModelSerializer):
     anime   = AnimeSerializer(read_only=True, many=False)
     user    = UserSerializer(read_only=True, many=False)
+    status  = AnimeStatusSerializer(read_only=True, many=False)
     class Meta:
         model   = AnimeReview
-        fields  = ('id', 'anime', 'user', 'review', 'date')
+        fields  = ('id', 'anime', 'user', 'review', 'draft', 'status', 'date')
 
 class TopicCategorieSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True, many=False)

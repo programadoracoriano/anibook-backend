@@ -14,6 +14,10 @@ class Profile(models.Model):
                             upload_to='media/profile/', force_format='JPEG',
   default='profile/user-placeholder.png', null=True)
 
+  @property
+  def image_url(self):
+      return "{0}{1}".format(settings.SITE_URL, self.image.url)
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -31,6 +35,9 @@ class DefaultAvatar(models.Model):
     def __str__(self):
         return self.tag
 
+    @property
+    def image_url(self):
+        return "{0}{1}".format(settings.SITE_URL, self.image.url)
 
 class Categorie(models.Model):
     categorie = models.CharField(max_length=75, null=False, blank=False, verbose_name="Categorie")
@@ -106,11 +113,6 @@ class Anime(models.Model):
     def __str__(self):
         return self.name
 
-class AnimeReview(models.Model):
-    anime   = models.ForeignKey(Anime, null=True, blank=True, verbose_name="Anime", on_delete=models.CASCADE)
-    user    = models.ForeignKey(User, null=True, blank=True, verbose_name="User", on_delete=models.CASCADE)
-    review  = models.TextField(max_length=5000, null=False, blank=False, verbose_name="Review")
-    date    = models.DateField(auto_now=True)
 
 class TopicCategorie(models.Model):
     categorie = models.CharField(max_length=150, null=False, blank=False, verbose_name="Categorie")
@@ -139,6 +141,14 @@ class AnimeStatus(models.Model):
     score           = models.IntegerField(null=True, blank=False, verbose_name="Score")
     note            = models.TextField(max_length=500, null=True, blank=True, verbose_name="Notes")
 
+class AnimeReview(models.Model):
+    anime   = models.ForeignKey(Anime, null=True, blank=True, verbose_name="Anime", on_delete=models.CASCADE)
+    user    = models.ForeignKey(User, null=True, blank=True, verbose_name="User", on_delete=models.CASCADE)
+    review  = models.TextField(max_length=5000, null=False, blank=False, verbose_name="Review")
+    draft   = models.IntegerField(null=True, blank=True)
+    status  = models.ForeignKey(AnimeStatus, null=True, blank=True, verbose_name="Status", on_delete=models.CASCADE)
+    date    = models.DateField(auto_now=True)
+
 class Followers(models.Model):
     follower    = models.ForeignKey(User, null=False, blank=False, verbose_name="Anime", on_delete=models.CASCADE)
     followers   = models.IntegerField(null=False, blank=True)
@@ -148,6 +158,10 @@ class CustomList(models.Model):
     title       = models.CharField(max_length=100, null=False, blank=False, verbose_name="Title")
     image       = ResizedImageField(null=True, blank=False, size=[800, 600], keep_meta=False, quality=80, upload_to='custom_list',
                       force_format='JPEG')
+
+    @property
+    def image_url(self):
+        return "{0}{1}".format(settings.SITE_URL, self.image.url)
 
 class AnimeCustomList(models.Model):
     custom_list = models.ForeignKey(CustomList, null=True, blank=False, verbose_name="CustomList", on_delete=models.CASCADE)

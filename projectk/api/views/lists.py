@@ -199,15 +199,13 @@ def CustomListAPI(request):
         if 'main' in request.data:
             mainA = request.data['main']
         if len(title) < 0 or len(title) > 100:
-            msg = {{'msg':'You only can use 6 to 100 characters on title'}, {'msg':None}}
+            msg = {'msg':'You only can use 6 to 100 characters on title'}
         elif mainA == None:
-            msg = {{'msg': 'You Need to select a anime for thumbnail'}, {'msg':None}}
+            msg = {'msg': 'You Need to select a anime for thumbnail'}
         else:
             getAnime        = Anime.objects.get(id=mainA)
             qs              = CustomList.objects.create(user=request.user, title=title, image=getAnime.image)
-            query           = CustomList.objects.filter(user=request.user).order_by("-id")
-            serializer      = CustomListSerializer(query, many=True)
-            msg             = serializer.data
+            msg             = {'msg':'Custom list created successfully!'}
         return Response(msg)
     if request.method == 'GET':
         qs = CustomList.objects.filter(user=request.user).order_by("-id")
@@ -244,7 +242,7 @@ def AnimeCustomListAPI(request):
         return Response(msg)
     if request.method == 'GET':
         customId = request.GET['id']
-        qs = AnimeCustomList.objects.filter(custom_list__id=customId)
+        qs = AnimeCustomList.objects.filter(custom_list__id=customId).order_by("anime__name")
         serializer = AnimeCustomListSerializer(qs, many=True)
         return Response(serializer.data)
 
@@ -274,6 +272,19 @@ def DeleteCustomListAPI(request):
         qs = CustomList.objects.filter(id=request.GET['id'], user=request.user).delete()
         query = CustomList.objects.filter(user=request.user).order_by("-id")
         serializer = CustomListSerializer(query, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def DeleteAnimeCustomListAPI(request):
+    if request.method == 'GET':
+        id              = request.GET['id']
+        anime           = request.GET['anime']
+        getCustomList   = CustomList.objects.get(id=id, user=request.user)
+        qs              = AnimeCustomList.objects.filter(custom_list=getCustomList,
+                                                         anime__id=anime).delete()
+        query = AnimeCustomList.objects.filter(custom_list=getCustomList).order_by("-id")
+        serializer      = AnimeCustomListSerializer(query, many=True)
         return Response(serializer.data)
 
 @api_view(['GET'])

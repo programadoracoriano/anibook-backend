@@ -30,5 +30,10 @@ urlpatterns = [
     path('get/reviews/', AnimeReviewAPI, name="animereview"),
     path('get/all/reviews/', getAllReviewsAPI, name="getallreviews"),
     path('show/review/', getReviewAPI, name="showreview"),
+    path('get/my/review/', getMyReviewAPI, name="getmyreview"),
+    path('get/my/reviews/', MyReviewsAPI, name="getmyreviews"),
+
+    #delete section
+    path('delete/review/', deleteReviewAPI, name="getmyreviews"),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

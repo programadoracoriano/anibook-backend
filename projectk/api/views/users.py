@@ -216,20 +216,23 @@ def ListFollowingAPI(request):
 def AnimeReviewAPI(request):
     if request.method == 'GET':
         id = request.GET['id']
-        qs = AnimeReview.objects.filter(anime__id=id)
+        qs = AnimeReview.objects.filter(anime__id=id, draft=1)
         serializer = AnimeReviewSerializer(qs, many=True)
         return Response(serializer.data)
     if request.method == 'POST':
         id          = request.data['id']
         rev         = request.data['review']
+        draft       = request.data['draft']
         msg         = {}
-        anime = Anime.objects.get(id=id)
+        anime       = Anime.objects.get(id=id)
+        getStatus   = AnimeStatus.objects.get(anime__id=id, user=request.user)
         countRev    = AnimeReview.objects.filter(anime__id=id, user=request.user)
         if countRev.count() > 0 and rev is not None:
-            qs  = countRev.update(review=rev)
+            qs  = countRev.update(review=rev, status=getStatus, draft=draft)
             msg = {"msg": "Review Updated Successfully"}
         elif countRev.count() == 0 and rev is not None:
-            qs          = AnimeReview.objects.create(anime=anime, user=request.user, review=rev)
+            qs          = AnimeReview.objects.create(anime=anime, user=request.user, review=rev, status=getStatus,
+                                                     draft=draft)
             msg         = {"msg":"Review Added Successfully"}
         else:
             msg = {"msg": "You need to write a review!"}
@@ -240,7 +243,7 @@ def AnimeReviewAPI(request):
 def getAllReviewsAPI(request):
     if request.method == 'GET':
         id          = request.GET['id']
-        qs          = AnimeReview.objects.filter(anime__id=id)
+        qs          = AnimeReview.objects.filter(anime__id=id, draft=1)
         serializer  = AnimeReviewSerializer(qs, many=True)
         return Response(serializer.data)
 
@@ -249,11 +252,46 @@ def getAllReviewsAPI(request):
 def getReviewAPI(request):
     if request.method == 'GET':
         id          = request.GET['id']
-        qs          = AnimeReview.objects.get(id=id)
+        qs          = AnimeReview.objects.get(id=id, draft=1)
         serializer  = AnimeReviewSerializer(qs)
         return Response(serializer.data)
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
+def getMyReviewAPI(request):
+    if request.method == 'GET':
+        id              = request.GET['id']
+        qs              = None
+        msg     = {'default':True}
+        countReviews    =  AnimeReview.objects.filter(anime__id=id, user=request.user).count()
+        if countReviews > 0:
+            qs          = AnimeReview.objects.get(anime__id=id, user=request.user)
+            serializer  = AnimeReviewSerializer(qs)
+            msg         = serializer.data
+        return Response(msg)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def MyReviewsAPI(request):
+    if request.method == 'GET':
+        qs          = AnimeReview.objects.filter(user=request.user).order_by("date")
+        serializer  = AnimeReviewSerializer(qs, many=True)
+        return Response(serializer.data)
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
 def LogoutAPI(request):
     return Response({"isLoggout":True})
+
+
+#delete section
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def deleteReviewAPI(request):
+    if request.method == 'GET':
+        id          = request.GET['id']
+        qs          = AnimeReview.objects.filter(id=id, user=request.user).delete()
+        query       = AnimeReview.objects.filter(user=request.user).order_by("date")
+        serializer  = AnimeReviewSerializer(query, many=True)
+        return Response(serializer.data)
