@@ -87,6 +87,8 @@ class DateOption(models.Model):
         return self.tag
 
 class Anime(models.Model):
+    cover_image         =   ResizedImageField(null=True, blank=False, size=[800, 600], keep_meta=False, quality=80, upload_to='anime_cover',
+                              force_format='JPEG')
     image               =   ResizedImageField(null=True, blank=False, size=[800, 600], keep_meta=False, quality=80, upload_to='anime',
                               force_format='JPEG')
     name                =   models.CharField(max_length=300, null=False, blank=False, verbose_name="Anime Name")
