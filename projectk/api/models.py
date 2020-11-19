@@ -112,6 +112,10 @@ class Anime(models.Model):
     def image_url(self):
         return "{0}{1}".format(settings.SITE_URL, self.image.url)
 
+    @property
+    def cover_image_url(self):
+        return "{0}{1}".format(settings.SITE_URL, self.cover_image.url)
+
     def __str__(self):
         return self.name
 
