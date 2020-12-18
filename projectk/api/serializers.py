@@ -9,7 +9,7 @@ from rest_framework.serializers import ReadOnlyField
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ('id', 'user', 'image_url')
+        fields = ('id', 'user', 'image_url', 'points',)
 
 class DefaultAvatarSerializer(serializers.ModelSerializer):
     class Meta:

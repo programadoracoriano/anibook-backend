@@ -1,3 +1,5 @@
+from datetime import date
+
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 #from rest_framework.parsers import MultiPartParser, JSONParser, FileUploadParser
 from rest_framework.response import Response
@@ -278,6 +280,22 @@ def MyReviewsAPI(request):
         serializer  = AnimeReviewSerializer(qs, many=True)
         return Response(serializer.data)
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def collectPointsAPI(request):
+    if request.method == 'GET':
+        valPoint    = CollectPoint.objects.filter(user=request.user, date=date.today())
+        getPoints   = Profile.objects.get(id=request.user.pk)
+        getAnime    = AnimeStatus.objects.filter(user=request.user)
+        collected   = False
+        msg = {'msg':''}
+        if valPoint.count() == 0 and getAnime.count() == 0:
+            p = getPoints.points + 1
+            qs = Profile.objects.filter(id=request.user.id).update(points=p)
+            msg = {'msg':'Point Collected Successfully', 'state':True}
+        elif valPoint.count() > 0:
+            msg = {'msg': 'Point Collected Successfully', 'state': True}
+        return Response(msg)
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])

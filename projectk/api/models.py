@@ -12,7 +12,8 @@ class Profile(models.Model):
   user        = models.OneToOneField(User, on_delete=models.CASCADE)
   image       = ResizedImageField(size=[200, 200], quality=80, keep_meta=False,
                             upload_to='media/profile/', force_format='JPEG',
-  default='profile/user-placeholder.png', null=True)
+                            default='profile/user-placeholder.png', null=True)
+  points      = models.IntegerField(null=True, blank=True, default=0)
 
   @property
   def image_url(self):
@@ -107,14 +108,15 @@ class Anime(models.Model):
     rating              =   models.ForeignKey(Rating, null=True, blank=True,  verbose_name="Rating", on_delete=models.CASCADE)
     sinopse             =   models.TextField(max_length=800, blank=True, null=False, verbose_name="Synopsis")
     trailer             =   models.CharField(max_length=100, blank=True, null=True, verbose_name="Trailer(Youtube ID)")
-
+    #score               =   models.FloatField(null=True, blank=True, default=0.0, verbose_name="Score(Não Preencher)")
     @property
     def image_url(self):
         return "{0}{1}".format(settings.SITE_URL, self.image.url)
 
     @property
     def cover_image_url(self):
-        return "{0}{1}".format(settings.SITE_URL, self.cover_image.url)
+        if self.cover_image:
+            return "{0}{1}".format(settings.SITE_URL, self.cover_image.url)
 
     def __str__(self):
         return self.name
@@ -172,6 +174,10 @@ class CustomList(models.Model):
 class AnimeCustomList(models.Model):
     custom_list = models.ForeignKey(CustomList, null=True, blank=False, verbose_name="CustomList", on_delete=models.CASCADE)
     anime       = models.ForeignKey(Anime, null=True, blank=False, verbose_name="Anime", on_delete=models.CASCADE)
+
+class CollectPoint(models.Model):
+    user = models.ForeignKey(User, null=False, blank=False, verbose_name="User", on_delete=models.CASCADE)
+    date = models.DateField(auto_now=True)
 
 
 

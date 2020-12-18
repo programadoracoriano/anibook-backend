@@ -33,6 +33,9 @@ urlpatterns = [
     path('get/my/review/', getMyReviewAPI, name="getmyreview"),
     path('get/my/reviews/', MyReviewsAPI, name="getmyreviews"),
 
+    #collect points
+    path('user/collectpoint/', collectPointsAPI, name="collectpoint"),
+
     #delete section
     path('delete/review/', deleteReviewAPI, name="getmyreviews"),
 
