@@ -56,15 +56,52 @@ def PublicAnimeListAPI(request):
         return Response(serializer.data)
 
 
+'''@api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
+def WatchingAnimeAPI(request):
+    if request.method == 'POST':
+        today = date.today()
+        msg = {}
+        getAnime    = Anime.objects.get(id=request.data['id'])
+        anSt        = AnimeStatus.objects.filter(anime=getAnime, user=request.user)
+        n_episodes = int(request.data['ep_number'])
+        if n_episodes is None or n_episodes == '':
+            msg = {'msg': 'You need to insert the number of Episodes'}
+        elif getAnime.aired > today:
+            msg = {'msg': 'This Anime is not aired yet!'}
+        elif anSt.count() == 0:
+            if n_episodes == getAnime.episodes_number or n_episodes > getAnime.episodes_number:
+                getStatusCompleted = Status.objects.get(val=2)
+                query = AnimeStatus.objects.create(user=request.user, anime=getAnime,
+                                               status=getStatusCompleted, score=request.data['score'], completed=1)
+                msg = {"msg": "Anime moved to completed section."}
+            else:
+                getStatusWatching = Status.objects.get(val=1)
+                query = AnimeStatus.objects.create(user=request.user, anime=getAnime,
+                                               status=getStatusWatching, score=request.data['score'],
+                                               episodes_number=n_episodes, completed=1)
+                msg = {"msg": "Anime Added successfully"}
+        elif anSt.count() > 0:
+            if n_episodes == getAnime.episodes_number or n_episodes > getAnime.episodes_number:
+                getStatusCompleted = Status.objects.get(val=2)
+                query = anSt.update(user=request.user, anime=getAnime, completed=1, score=request.data['score'],
+                                status=getStatusCompleted, episodes_number=n_episodes)
+                msg = {"msg": "Anime moved to completed section."}
+            else:
+                getStatusWatching = Status.objects.get(val=1)
+                anSt.update(episodes_number=n_episodes, status=getStatusWatching, score=request.data['score'])
+                msg = {"msg": "Anime Updated successfully"}
+        return Response(msg)'''
+
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def AnimeListAllAPI(request):
     if request.method == 'GET':
         status  = request.GET['status']
-        order   = request.GET.get('order', 'score')
+        order   = request.GET.get('order', '')
         serializer = ''
         if status == '0':
-            getList =  AnimeStatus.objects.filter(user=request.user).order_by(order)
+            getList =  AnimeStatus.objects.filter(user=request.user).order_by("status", "anime__name")
             serializer = AnimeStatusSerializer(getList, many=True)
         elif status == '1':
             getList = AnimeStatus.objects.filter(user=request.user, status__val=1).order_by(order)

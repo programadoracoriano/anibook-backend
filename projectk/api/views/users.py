@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 
 from ..models import *
 from ..serializers import *
-from django.db.models import Avg, Sum, FloatField, F, Count
+from django.db.models import Avg, Sum, FloatField, F, Count, Q
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes, parser_classes
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -114,9 +114,9 @@ def UserExtraDetailsAPI(request):
     if request.method == 'GET':
         uId = request.GET['id']
         u = User.objects.get(id=uId)
-        user = User.objects.annotate(total_watching=Sum(F('animestatus__episodes_number') * F('animestatus__anime__episodes_number'), output_field=FloatField()) /60,
+        user = User.objects.annotate(total_watching=Sum(F('animestatus__episodes_number') * F('animestatus__anime__minutes_per_episode'), output_field=FloatField()),
                                      total_completed=Sum((F('animestatus__completed') * F('animestatus__anime__episodes_number')) * F('animestatus__anime__minutes_per_episode'),
-                                                         output_field=FloatField())/ 60).get(id=u.id)
+                                                         output_field=FloatField(), filter=Q(animestatus__status=2))).get(id=u.id)
         total_completed = AnimeStatus.objects.filter(user=u, status__id=2).count()
         total_watching = AnimeStatus.objects.filter(user=u, status__id=1).count()
         return Response({"total_hours":user.total_watching,
@@ -138,9 +138,11 @@ def ProfileAPI(request):
 @authentication_classes([TokenAuthentication])
 def UserDataAPI(request):
     if request.method == 'GET':
-        user = User.objects.annotate(total_watching=Sum(F('animestatus__episodes_number') * F('animestatus__anime__episodes_number'), output_field=FloatField()) /60,
+
+        user = User.objects.annotate(total_watching=Sum(F('animestatus__episodes_number') * F('animestatus__anime__minutes_per_episode'), output_field=FloatField()),
                                      total_completed=Sum((F('animestatus__completed') * F('animestatus__anime__episodes_number')) * F('animestatus__anime__minutes_per_episode'),
-                                                         output_field=FloatField())/ 60).get(id=request.user.id)
+                                                         output_field=FloatField(), filter=Q(animestatus__status=2))).get(id=request.user.id)
+
         total_completed = AnimeStatus.objects.filter(user=request.user, status__id=2).count()
         total_watching = AnimeStatus.objects.filter(user=request.user, status__id=1).count()
         return Response({"total_hours":user.total_watching,
@@ -296,6 +298,34 @@ def collectPointsAPI(request):
         elif valPoint.count() > 0:
             msg = {'msg': 'Point Collected Successfully', 'state': True}
         return Response(msg)
+
+
+@api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
+def TopicAPI(request):
+    if request.method == 'GET':
+        qs          = Topic.objects.order_by("date")
+        serializer  = TopicSerializer(qs, many=True)
+        return Response(serializer.data)
+    if request.method == 'POST':
+        title       = request.data['title']
+        description = request.data['description']
+        anime       = request.data['animeId']
+        getAnime    = Anime.objects.get(id=anime)
+        msg = {}
+        if title == None:
+            msg = {'msg':'You need to Insert a title'}
+        elif description == None:
+            msg = {'msg': 'You need to Insert a topic Description.'}
+        else:
+            Topic.objects.create(user=request.user, anime=getAnime, title=request.data['title'],
+                                 description=description)
+            msg = {'msg': 'Topic Created Successfully.'}
+        return Response(msg)
+
+
+
+
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])

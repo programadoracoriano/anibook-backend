@@ -88,7 +88,7 @@ class DateOption(models.Model):
         return self.tag
 
 class Anime(models.Model):
-    cover_image         =   ResizedImageField(null=True, blank=False, size=[800, 600], keep_meta=False, quality=80, upload_to='anime_cover',
+    cover_image         =   ResizedImageField(null=True, blank=True, size=[800, 600], keep_meta=False, quality=80, upload_to='anime_cover',
                               force_format='JPEG')
     image               =   ResizedImageField(null=True, blank=False, size=[800, 600], keep_meta=False, quality=80, upload_to='anime',
                               force_format='JPEG')
@@ -121,18 +121,19 @@ class Anime(models.Model):
     def __str__(self):
         return self.name
 
-
-class TopicCategorie(models.Model):
-    categorie = models.CharField(max_length=150, null=False, blank=False, verbose_name="Categorie")
-    def __str__(self):
-        return self.categorie
-
 class Topic(models.Model):
     user        = models.ForeignKey(User, null=True, blank=True, verbose_name="User", on_delete=models.CASCADE)
-    categorie   = models.ForeignKey(TopicCategorie, null=True, blank=True, verbose_name="User", on_delete=models.CASCADE)
+    anime       = models.ForeignKey(Anime, null=True, blank=True, verbose_name="Anime", on_delete=models.CASCADE)
     title       = models.CharField(max_length=150, null=False, blank=False, verbose_name="title")
     description = models.TextField(max_length=5000, null=False, blank=False, verbose_name="Description")
     date        = models.DateField(auto_now=True)
+
+class TopicComment(models.Model):
+    topic   = models.ForeignKey(Topic, null=True, blank=True, verbose_name="Topico", on_delete=models.CASCADE)
+    user    = models.ForeignKey(User, null=True, blank=True, verbose_name="User", on_delete=models.CASCADE)
+    comment = models.TextField(max_length=5000, null=False, blank=False, verbose_name="Comment")
+    date    = models.DateField(auto_now=True)
+
 
 class Status(models.Model):
     val = models.IntegerField(null=False, blank=False, verbose_name="Value")

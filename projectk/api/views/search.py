@@ -71,3 +71,12 @@ def UserSearchAPI(request):
         query       = User.objects.filter(username__icontains=search)
         serializer  = UserSerializer(query, many=True)
         return Response(serializer.data)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def AnimeListSearchAPI(request):
+    if request.method == 'GET':
+        search = request.GET['search']
+        query = AnimeStatus.objects.filter(anime__name__icontains=search, user=request.user)
+        serializer = AnimeStatusSerializer(query, many=True)
+        return Response(serializer.data)

@@ -12,6 +12,7 @@ urlpatterns = [
     path('search/all/', AnimeSearchAPI, name="search"),
     path('search/by/season/', SeasonSearchAPI, name="searchseason"),
     path('search/by/genre/', SearchByGenreAPI, name="searchbygenre"),
+    path('search/anime/list/', AnimeListSearchAPI, name="animelistsearch"),
     path('get/genres/', GetGenresAPI, name="getgenres"),
 
 

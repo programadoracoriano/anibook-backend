@@ -116,18 +116,12 @@ class AnimeReviewSerializer(serializers.ModelSerializer):
         model   = AnimeReview
         fields  = ('id', 'anime', 'user', 'review', 'draft', 'status', 'date')
 
-class TopicCategorieSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True, many=False)
-    class Meta:
-        model   = TopicCategorie
-        fields  = ('id' , 'categorie')
-
 
 class TopicSerializer(serializers.ModelSerializer):
     user        = UserSerializer(read_only=True, many=False)
-    categorie   = TopicCategorieSerializer(read_only=True, many=False)
+    anime       = AnimeSerializer(read_only=True, many=False)
     class Meta:
-        model   = TopicCategorie
+        model   = Topic
         fields  = ('id' , 'user', 'categorie', 'title', 'description', 'date')
 
 
