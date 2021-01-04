@@ -42,6 +42,8 @@ def SignupAPI(request):
             msg = {'msg':'User already exists!Please choose other username!', 'success':False}
         elif getEmail.count() > 0:
             msg = {'msg':'E-mail already exists!Please choose another e-mail!', 'success':False}
+        elif ' ' in username == True:
+            msg = {'msg': 'Your username cannot have spaces!', 'success': False}
         elif len(username) < 6 or len(username)> 20:
             msg = {'msg': 'Your username needs to be 6 to 20 characters.', 'success':False}
         elif len(password) < 8 or len(password)>16:
@@ -118,11 +120,14 @@ def UserExtraDetailsAPI(request):
                                      total_completed=Sum((F('animestatus__completed') * F('animestatus__anime__episodes_number')) * F('animestatus__anime__minutes_per_episode'),
                                                          output_field=FloatField(), filter=Q(animestatus__status=2))).get(id=u.id)
         total_completed = AnimeStatus.objects.filter(user=u, status__id=2).count()
-        total_watching = AnimeStatus.objects.filter(user=u, status__id=1).count()
+        total_watching  = AnimeStatus.objects.filter(user=u, status__id=1).count()
+        total_dropped   = AnimeStatus.objects.filter(user=u, status__val=3).count()
+        total_plan      = AnimeStatus.objects.filter(user=u, status__val=5).count()
         return Response({"total_hours":user.total_watching,
                          "total_completed":user.total_completed,
                          "animes_completed":total_completed,
-                         "animes_watching":total_watching})
+                         "animes_watching":total_watching,
+                         "animes_dropped":total_dropped, "animes_plan":total_plan})
 
 
 @api_view(['GET'])
@@ -145,10 +150,13 @@ def UserDataAPI(request):
 
         total_completed = AnimeStatus.objects.filter(user=request.user, status__id=2).count()
         total_watching = AnimeStatus.objects.filter(user=request.user, status__id=1).count()
+        total_dropped = AnimeStatus.objects.filter(user=request.user, status__val=3).count()
+        total_plan = AnimeStatus.objects.filter(user=request.user, status__val=5).count()
         return Response({"total_hours":user.total_watching,
                          "total_completed":user.total_completed,
                          "animes_completed":total_completed,
-                           "animes_watching":total_watching})
+                           "animes_watching":total_watching,
+                         "animes_dropped":total_dropped, "animes_plan":total_plan})
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])

@@ -53,13 +53,13 @@ def SeasonSearchAPI(request):
         season = request.GET['season']
         year = request.GET['year']
         if season == 'winter':
-            anime = Anime.objects.filter(aired__month__in=winter, aired__year=year)
+            anime = Anime.objects.filter(aired__month__in=winter, aired__year=year).order_by("?")
         elif season == 'spring':
-            anime = Anime.objects.filter(aired__month__in=spring, aired__year=year)
+            anime = Anime.objects.filter(aired__month__in=spring, aired__year=year).order_by("?")
         elif season == 'summer':
-            anime = Anime.objects.filter(aired__month__in=summer, aired__year=year)
+            anime = Anime.objects.filter(aired__month__in=summer, aired__year=year).order_by("?")
         elif season == 'fall':
-            anime = Anime.objects.filter(aired__month__in=fall, aired__year=year)
+            anime = Anime.objects.filter(aired__month__in=fall, aired__year=year).order_by("?")
         serializer = AnimeSerializer(anime, many=True)
         return Response(serializer.data)
 

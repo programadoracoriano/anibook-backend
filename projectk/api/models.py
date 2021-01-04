@@ -87,6 +87,11 @@ class DateOption(models.Model):
     def __str__(self):
         return self.tag
 
+class StreamSource(models.Model):
+    source = models.CharField(max_length=150, null=False, blank=False, verbose_name="Source")
+    def __str__(self):
+        return self.source
+
 class Anime(models.Model):
     cover_image         =   ResizedImageField(null=True, blank=True, size=[800, 600], keep_meta=False, quality=80, upload_to='anime_cover',
                               force_format='JPEG')
@@ -108,7 +113,7 @@ class Anime(models.Model):
     rating              =   models.ForeignKey(Rating, null=True, blank=True,  verbose_name="Rating", on_delete=models.CASCADE)
     sinopse             =   models.TextField(max_length=800, blank=True, null=False, verbose_name="Synopsis")
     trailer             =   models.CharField(max_length=100, blank=True, null=True, verbose_name="Trailer(Youtube ID)")
-    #score               =   models.FloatField(null=True, blank=True, default=0.0, verbose_name="Score(Não Preencher)")
+    stream_source       =   models.ForeignKey(StreamSource, null=True, blank=True,  verbose_name="Stream Source", on_delete=models.CASCADE)
     @property
     def image_url(self):
         return "{0}{1}".format(settings.SITE_URL, self.image.url)
