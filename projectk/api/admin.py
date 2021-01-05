@@ -41,6 +41,16 @@ class StudioAdmin(admin.ModelAdmin):
     list_display = ('name', )
     search_fields = ('id','name', )
 
+class StreamSourceAdmin(admin.ModelAdmin):
+    model = StreamSource
+    list_display = ('source', )
+    search_fields = ('id','source', )
+
+class SeasonNumberAdmin(admin.ModelAdmin):
+    model = SeasonNumber
+    list_display = ('tag', )
+    search_fields = ('id','tag', )
+
 class AnimeAdmin(admin.ModelAdmin):
     model = Anime
     ordering = ('-id',)
@@ -68,6 +78,8 @@ admin.site.register(AnimeType, AnimeTypeAdmin)
 admin.site.register(AlternativeTitle, AlternativeTitleAdmin)
 admin.site.register(Categorie, CategorieAdmin)
 admin.site.register(Studio, StudioAdmin)
+admin.site.register(StreamSource, StreamSourceAdmin)
+admin.site.register(SeasonNumber, SeasonNumberAdmin)
 admin.site.register(Anime, AnimeAdmin)
 admin.site.register(AnimeStatus)
 admin.site.register(Status)

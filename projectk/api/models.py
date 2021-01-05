@@ -92,6 +92,12 @@ class StreamSource(models.Model):
     def __str__(self):
         return self.source
 
+class SeasonNumber(models.Model):
+    val = models.IntegerField(null=False, blank=False, verbose_name="Season Number")
+    tag = models.CharField(null=False, blank=False, max_length=100, verbose_name="Designation")
+    def __str__(self):
+        return self.tag
+
 class Anime(models.Model):
     cover_image         =   ResizedImageField(null=True, blank=True, size=[800, 600], keep_meta=False, quality=80, upload_to='anime_cover',
                               force_format='JPEG')
@@ -99,6 +105,7 @@ class Anime(models.Model):
                               force_format='JPEG')
     name                =   models.CharField(max_length=300, null=False, blank=False, verbose_name="Anime Name")
     alternative_title   =   models.ManyToManyField(AlternativeTitle, blank=True, verbose_name="Alternative Title")
+    season_number       =   models.ForeignKey(SeasonNumber, null=True, blank=True, verbose_name="Season", on_delete=models.CASCADE)
     type                =   models.ForeignKey(AnimeType, null=True, blank=True, verbose_name="Type", on_delete=models.CASCADE)
     episodes_number     =   models.IntegerField(null=True, blank=True, verbose_name="Number of Episodes")
     minutes_per_episode =   models.IntegerField(null=True, blank=True, verbose_name="Minutes per Episode")

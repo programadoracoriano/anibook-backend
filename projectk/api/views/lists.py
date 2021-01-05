@@ -308,6 +308,24 @@ def PublicCustomListAPI(request):
         serializer = CustomListSerializer(qs, many=True)
         return Response(serializer.data)
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def ShowAnimeStudioAPI(request):
+    if request.method == 'GET':
+        id = request.GET['id']
+        qs = Anime.objects.filter(studio__id=id)
+        serializer = AnimeSerializer(qs, many=True)
+        return Response(serializer.data)
+
+
+
+'''@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def RandomizerAPI(request):
+    if request.method == 'GET':
+        genre       = request.GET['genre']
+        getRandom   = '''
+
 #begin delete section
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])

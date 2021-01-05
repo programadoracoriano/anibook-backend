@@ -334,7 +334,6 @@ def TopicAPI(request):
 
 
 
-
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 def LogoutAPI(request):

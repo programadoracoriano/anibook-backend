@@ -59,6 +59,16 @@ class SourceSerializer(serializers.ModelSerializer):
         model   = Source
         fields  = ('id', 'source',)
 
+class StreamSourceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model   = StreamSource
+        fields  = ('id', 'source',)
+
+class SeasonNumberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model   = SeasonNumber
+        fields  = ('id', 'val', 'tag')
+
 class AnimeSerializer(serializers.ModelSerializer):
     categorie       = CategorieSerializer(read_only=True, many=True)
     studio          = StudioSerializer(read_only=True, many=True)
