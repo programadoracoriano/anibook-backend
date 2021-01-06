@@ -309,13 +309,24 @@ def PublicCustomListAPI(request):
         return Response(serializer.data)
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
 def ShowAnimeStudioAPI(request):
     if request.method == 'GET':
         id = request.GET['id']
         qs = Anime.objects.filter(studio__id=id)
         serializer = AnimeSerializer(qs, many=True)
         return Response(serializer.data)
+
+@api_view(['GET'])
+def StudioAPI(request):
+    if request.method == 'GET':
+        id = request.GET['id']
+        qs = Studio.objects.get(id=id)
+        serializer = StudioSerializer(qs, many=False)
+        return Response(serializer.data)
+
+
+
+
 
 
 
