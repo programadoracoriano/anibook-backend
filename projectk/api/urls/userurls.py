@@ -25,6 +25,7 @@ urlpatterns = [
     path('detect/follower/', DetectFollowerAPI, name="detectfollower"),
     path('list/followers/', ListFollowersAPI, name="listfollower"),
     path('list/following/', ListFollowingAPI, name="listfollowing"),
+    path('updates/followers/anime/list/', GetFollowerUpdatesAPI, name="followerslistupdates"),
 
     #reviews and topics urls
     path('get/reviews/', AnimeReviewAPI, name="animereview"),

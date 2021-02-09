@@ -8,12 +8,18 @@ from django.dispatch import receiver
 from django.conf import settings
 
 
+class Categorie(models.Model):
+    categorie = models.CharField(max_length=75, null=False, blank=False, verbose_name="Categorie")
+    def __str__(self):
+        return self.categorie
+
 class Profile(models.Model):
   user        = models.OneToOneField(User, on_delete=models.CASCADE)
   image       = ResizedImageField(size=[200, 200], quality=80, keep_meta=False,
                             upload_to='media/profile/', force_format='JPEG',
                             default='profile/user-placeholder.png', null=True)
   points      = models.IntegerField(null=True, blank=True, default=0)
+  genres      = models.ManyToManyField(Categorie)
 
   @property
   def image_url(self):
@@ -40,10 +46,7 @@ class DefaultAvatar(models.Model):
     def image_url(self):
         return "{0}{1}".format(settings.SITE_URL, self.image.url)
 
-class Categorie(models.Model):
-    categorie = models.CharField(max_length=75, null=False, blank=False, verbose_name="Categorie")
-    def __str__(self):
-        return self.categorie
+
 
 class AnimeType(models.Model):
     type = models.CharField(max_length=75, null=False, blank=False, verbose_name="Type")
@@ -161,6 +164,7 @@ class AnimeStatus(models.Model):
     status          = models.ForeignKey(Status, null=False, blank=False, verbose_name="Status", on_delete=models.CASCADE)
     score           = models.IntegerField(null=True, blank=False, verbose_name="Score")
     note            = models.TextField(max_length=500, null=True, blank=True, verbose_name="Notes")
+    date            = models.DateTimeField()
 
 class AnimeReview(models.Model):
     anime   = models.ForeignKey(Anime, null=True, blank=True, verbose_name="Anime", on_delete=models.CASCADE)
@@ -182,7 +186,8 @@ class CustomList(models.Model):
 
     @property
     def image_url(self):
-        return "{0}{1}".format(settings.SITE_URL, self.image.url)
+        if self.image:
+            return "{0}{1}".format(settings.SITE_URL, self.image.url)
 
 class AnimeCustomList(models.Model):
     custom_list = models.ForeignKey(CustomList, null=True, blank=False, verbose_name="CustomList", on_delete=models.CASCADE)

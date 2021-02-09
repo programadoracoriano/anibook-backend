@@ -59,6 +59,13 @@ class AnimeAdmin(admin.ModelAdmin):
     filter_horizontal = ('categorie', 'producers', 'licensors', 'studio', 'alternative_title')
     search_fields = ('id', 'name', 'aired__day')
 
+class AnimeStatusAdmin(admin.ModelAdmin):
+    model       = AnimeStatus
+    ordering    = ("-date")
+    date_hierarchy = 'date'
+    list_display = ('id', 'date',)
+    search_fields = ('id', 'user__username',)
+
 class DefaultAvatarAdmin(admin.ModelAdmin):
     model = DefaultAvatar
     list_display = ('tag',)

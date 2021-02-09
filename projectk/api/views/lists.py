@@ -1,4 +1,4 @@
-from datetime import date
+import datetime
 
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 #from rest_framework.parsers import MultiPartParser, JSONParser, FileUploadParser
@@ -117,7 +117,8 @@ def AnimeListAllAPI(request):
             serializer = AnimeStatusSerializer(getList, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
-        today = date.today()
+        today = datetime.date.today()
+        datenow = datetime.datetime.now()
         msg = {}
         getAnime    = Anime.objects.get(id=request.data['id'])
         anSt        = AnimeStatus.objects.filter(anime=getAnime, user=request.user)
@@ -131,22 +132,25 @@ def AnimeListAllAPI(request):
                 if n_episodes == getAnime.episodes_number or n_episodes > getAnime.episodes_number:
                     getStatusCompleted = Status.objects.get(val=2)
                     query   = AnimeStatus.objects.create(user=request.user, anime=getAnime,
-                                                         status=getStatusCompleted, score=request.data['score'] ,completed=1)
+                                                         status=getStatusCompleted, score=request.data['score'] ,completed=1,
+                                                         date=datenow)
                     msg     = {"msg":"Anime moved to completed section."}
                 else:
                     getStatusWatching = Status.objects.get(val=1)
                     query = AnimeStatus.objects.create(user=request.user, anime=getAnime,
-                                        status=getStatusWatching,  score=request.data['score'], episodes_number=n_episodes,completed=1)
+                                        status=getStatusWatching,  score=request.data['score'], episodes_number=n_episodes,
+                                                       completed=1, date=datenow)
                     msg = {"msg":"Anime Added successfully"}
             elif anSt.count() > 0:
                 if n_episodes == getAnime.episodes_number or n_episodes > getAnime.episodes_number:
                     getStatusCompleted = Status.objects.get(val=2)
                     query = anSt.update(user=request.user, anime=getAnime, completed=1, score=request.data['score'],
-                                        status=getStatusCompleted, episodes_number=n_episodes)
+                                        status=getStatusCompleted, episodes_number=n_episodes, date=datenow)
                     msg = {"msg": "Anime moved to completed section."}
                 else:
                     getStatusWatching = Status.objects.get(val=1)
-                    anSt.update(episodes_number=n_episodes, status=getStatusWatching, score=request.data['score'])
+                    anSt.update(episodes_number=n_episodes, status=getStatusWatching, score=request.data['score'],
+                                date=datenow)
                     msg = {"msg": "Anime Updated successfully"}
             return Response(msg)
         if request.data['status'] == 2:
@@ -158,18 +162,21 @@ def AnimeListAllAPI(request):
                 getStatusCompleted = Status.objects.get(val=2)
                 query = AnimeStatus.objects.create(user=request.user, anime=getAnime,
                                                    status=getStatusCompleted,
-                                                   completed=request.data['completed'], score=request.data['score'])
+                                                   completed=request.data['completed'], score=request.data['score'],
+                                                   date=datenow)
                 msg = {"msg":"Anime added successfully"}
             elif anSt.count() > 0:
                 getStatusCompleted = Status.objects.get(val=2)
                 query = anSt.update(user=request.user, anime=getAnime, status=getStatusCompleted,
-                                    completed=request.data['completed'], episodes_number=0, score=request.data['score'])
+                                    completed=request.data['completed'], episodes_number=0, score=request.data['score'],
+                                    date=datenow)
                 msg = {"msg":"Anime updated successfully"}
             return Response(msg)
         if request.data['status'] == 3:
             if anSt.count() == 0:
                 getStatusPlanToWatch = Status.objects.get(val=5)
-                query = AnimeStatus.objects.create(user=request.user, anime=getAnime, status=getStatusPlanToWatch)
+                query = AnimeStatus.objects.create(user=request.user, anime=getAnime, status=getStatusPlanToWatch,
+                                                   date=datenow)
                 msg = {"msg":"Anime added to Plan to Watch."}
             elif anSt.count() > 0:
                 msg = {"msg": "You are already watching, completed or dropped this anime!"}
@@ -180,12 +187,12 @@ def AnimeListAllAPI(request):
             elif anSt.count() == 0:
                 getStatusDropped = Status.objects.get(val=3)
                 query = AnimeStatus.objects.create(user=request.user, anime=getAnime, score=request.data['score'],
-                                                   status=getStatusDropped)
+                                                   status=getStatusDropped, date=datenow)
                 msg = {"msg": "Anime added to Dropped"}
             elif anSt.count() > 0:
                 getStatusDropped = Status.objects.get(val=3)
                 query = anSt.update(user=request.user, anime=getAnime, status=getStatusDropped,
-                                    completed=0, episodes_number=0, score=request.data['score'])
+                                    completed=0, episodes_number=0, score=request.data['score'], date=datenow)
                 msg = {"msg": "Anime updated to dropped status!"}
             return Response(msg)
 
@@ -299,9 +306,9 @@ def PublicCustomListAPI(request):
         status = request.GET['status']
         qs = ''
         if status == '0':
-            qs = CustomList.objects.order_by("?")[:4]
+            qs = CustomList.objects.order_by("?")
         elif status == '1':
-            qs = CustomList.objects.order_by("-id")[:4]
+            qs = CustomList.objects.order_by("-id")
         elif status == '2':
             user = request.GET['user']
             qs = CustomList.objects.filter(user__id=user)

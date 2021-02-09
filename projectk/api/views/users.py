@@ -332,6 +332,19 @@ def TopicAPI(request):
         return Response(msg)
 
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def GetFollowerUpdatesAPI(request):
+    if request.method == 'GET':
+        listF = []
+        getFollowers = Followers.objects.filter(follower=request.user)
+        for i in getFollowers:
+            listF.append(i.followers)
+        qs = AnimeStatus.objects.filter(user__pk__in=listF).order_by("-date")
+        serializer = AnimeStatusSerializer(qs, many=True)
+        return Response(serializer.data)
+
+
 
 
 @api_view(['GET'])
@@ -350,3 +363,4 @@ def deleteReviewAPI(request):
         query       = AnimeReview.objects.filter(user=request.user).order_by("date")
         serializer  = AnimeReviewSerializer(query, many=True)
         return Response(serializer.data)
+
