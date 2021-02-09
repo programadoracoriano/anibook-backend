@@ -129,7 +129,14 @@ def AnimeListAllAPI(request):
             elif getAnime.aired > today:
                 msg = {'msg': 'This Anime is not aired yet!'}
             elif anSt.count() == 0:
-                if n_episodes == getAnime.episodes_number or n_episodes > getAnime.episodes_number:
+                if getAnime.episodes_number == None:
+                    getStatusWatching = Status.objects.get(val=1)
+                    query = AnimeStatus.objects.create(user=request.user, anime=getAnime,
+                                                       status=getStatusWatching, score=request.data['score'],
+                                                       episodes_number=n_episodes,
+                                                       completed=1, date=datenow)
+                    msg = {"msg": "Anime Added successfully"}
+                elif n_episodes == getAnime.episodes_number or n_episodes > getAnime.episodes_number:
                     getStatusCompleted = Status.objects.get(val=2)
                     query   = AnimeStatus.objects.create(user=request.user, anime=getAnime,
                                                          status=getStatusCompleted, score=request.data['score'] ,completed=1,
@@ -142,6 +149,11 @@ def AnimeListAllAPI(request):
                                                        completed=1, date=datenow)
                     msg = {"msg":"Anime Added successfully"}
             elif anSt.count() > 0:
+                if getAnime.episodes_number == None:
+                    getStatusWatching = Status.objects.get(val=1)
+                    anSt.update(episodes_number=n_episodes, status=getStatusWatching, score=request.data['score'],
+                                date=datenow)
+                    msg = {"msg": "Anime Updated successfully"}
                 if n_episodes == getAnime.episodes_number or n_episodes > getAnime.episodes_number:
                     getStatusCompleted = Status.objects.get(val=2)
                     query = anSt.update(user=request.user, anime=getAnime, completed=1, score=request.data['score'],
