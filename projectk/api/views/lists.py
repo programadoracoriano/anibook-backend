@@ -122,21 +122,18 @@ def AnimeListAllAPI(request):
         msg = {}
         getAnime    = Anime.objects.get(id=request.data['id'])
         anSt        = AnimeStatus.objects.filter(anime=getAnime, user=request.user)
+        eps = getAnime.episodes_number
         if request.data['status'] == 1:
             n_episodes = int(request.data['ep_number'])
             if n_episodes is None or n_episodes == '':
                 msg = {'msg':'You need to insert the number of Episodes'}
             elif getAnime.aired > today:
                 msg = {'msg': 'This Anime is not aired yet!'}
+            if eps == None or eps == '':
+                eps = 100000
             elif anSt.count() == 0:
-                if getAnime.episodes_number == None:
-                    getStatusWatching = Status.objects.get(val=1)
-                    query = AnimeStatus.objects.create(user=request.user, anime=getAnime,
-                                                       status=getStatusWatching, score=request.data['score'],
-                                                       episodes_number=n_episodes,
-                                                       completed=1, date=datenow)
-                    msg = {"msg": "Anime Added successfully"}
-                elif n_episodes == getAnime.episodes_number or n_episodes > getAnime.episodes_number:
+
+                if n_episodes == eps or n_episodes > eps:
                     getStatusCompleted = Status.objects.get(val=2)
                     query   = AnimeStatus.objects.create(user=request.user, anime=getAnime,
                                                          status=getStatusCompleted, score=request.data['score'] ,completed=1,
@@ -149,12 +146,8 @@ def AnimeListAllAPI(request):
                                                        completed=1, date=datenow)
                     msg = {"msg":"Anime Added successfully"}
             elif anSt.count() > 0:
-                if getAnime.episodes_number == None:
-                    getStatusWatching = Status.objects.get(val=1)
-                    anSt.update(episodes_number=n_episodes, status=getStatusWatching, score=request.data['score'],
-                                date=datenow)
-                    msg = {"msg": "Anime Updated successfully"}
-                if n_episodes == getAnime.episodes_number or n_episodes > getAnime.episodes_number:
+
+                if n_episodes == eps or n_episodes > eps:
                     getStatusCompleted = Status.objects.get(val=2)
                     query = anSt.update(user=request.user, anime=getAnime, completed=1, score=request.data['score'],
                                         status=getStatusCompleted, episodes_number=n_episodes, date=datenow)
@@ -166,7 +159,7 @@ def AnimeListAllAPI(request):
                     msg = {"msg": "Anime Updated successfully"}
             return Response(msg)
         if request.data['status'] == 2:
-            if getAnime.episodes_number == None and getAnime.date_end < today:
+            if eps == None and getAnime.date_end < today:
                 msg = {"msg": "Anime can't be added to completed because it hasn't ended yet!"}
             elif getAnime.aired > today:
                 msg = {'msg': 'This Anime is not aired yet! '}
