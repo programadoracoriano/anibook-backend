@@ -123,14 +123,14 @@ def AnimeListAllAPI(request):
         getAnime    = Anime.objects.get(id=request.data['id'])
         anSt        = AnimeStatus.objects.filter(anime=getAnime, user=request.user)
         eps         = getAnime.episodes_number
+        if eps is None:
+            eps = 10000
         if request.data['status'] == 1:
             n_episodes = int(request.data['ep_number'])
             if n_episodes is None or n_episodes == '':
                 msg = {'msg':'You need to insert the number of Episodes'}
             elif getAnime.aired > today:
                 msg = {'msg': 'This Anime is not aired yet!'}
-            if eps is None:
-                eps = 10000
             elif anSt.count() == 0:
                 if n_episodes == eps or n_episodes > eps:
                     getStatusCompleted = Status.objects.get(val=2)
