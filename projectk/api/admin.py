@@ -77,6 +77,8 @@ class DefaultAvatarAdmin(admin.ModelAdmin):
 
 
 
+
+
 admin.site.register(Rating, RatingAdmin)
 admin.site.register(Source, SourceAdmin)
 admin.site.register(Licensor, LicensorAdmin)

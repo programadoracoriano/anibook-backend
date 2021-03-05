@@ -13,6 +13,7 @@ urlpatterns = [
     path('list/public/anime/', PublicAnimeListAPI, name="listpublicanime"),
     path('get/anime/list/', AnimeListAPI, name="listanimes"),
     path('get/anime/details/', AnimeDetailsAPI, name="animedetails"),
+    path('get/anime/extra/', GetAnimeDetailsExtraAPI, name="animedetailsextra"),
     path('get/anime/score/', GetScoreAPI, name="animescore"),
     path('anime/list/all/', AnimeListAllAPI, name="allanimelist"),
     path('anime/note/', AnimeNoteAPI, name="animenote"),

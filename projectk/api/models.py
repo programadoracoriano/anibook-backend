@@ -90,8 +90,16 @@ class DateOption(models.Model):
     def __str__(self):
         return self.tag
 
+class StreamService(models.Model):
+    service = models.CharField(max_length=150, null=False, blank=False, verbose_name="Service")
+    icon    = ResizedImageField(null=True, blank=False, size=[32, 32], keep_meta=False, quality=80, upload_to='services/icon',
+                              force_format='PNG')
+    def __str__(self):
+        return self.service
+
 class StreamSource(models.Model):
-    source = models.CharField(max_length=150, null=False, blank=False, verbose_name="Source")
+    service = models.ForeignKey(StreamService, null=True, blank=False, verbose_name="Stream Service", on_delete=models.CASCADE)
+    source  = models.CharField(max_length=150, null=False, blank=False, verbose_name="Source")
     def __str__(self):
         return self.source
 
@@ -123,7 +131,9 @@ class Anime(models.Model):
     rating              =   models.ForeignKey(Rating, null=True, blank=True,  verbose_name="Rating", on_delete=models.CASCADE)
     sinopse             =   models.TextField(max_length=800, blank=True, null=False, verbose_name="Synopsis")
     trailer             =   models.CharField(max_length=100, blank=True, null=True, verbose_name="Trailer(Youtube ID)")
-    stream_source       =   models.ForeignKey(StreamSource, null=True, blank=True,  verbose_name="Stream Source", on_delete=models.CASCADE)
+    stream_source       =   models.ManyToManyField(StreamSource, blank=True,  verbose_name="Stream Source")
+    mal_id              =   models.IntegerField(null=True, blank=True, verbose_name="My Anime List Id")
+    anilist_id          =   models.IntegerField(null=True, blank=True, verbose_name="Anilist Id")
     @property
     def image_url(self):
         return "{0}{1}".format(settings.SITE_URL, self.image.url)

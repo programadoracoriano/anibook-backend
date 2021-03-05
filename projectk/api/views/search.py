@@ -20,7 +20,7 @@ def AnimeSearchAPI(request):
     if request.method == 'GET':
         anime = Anime.objects.filter(name__icontains=str(request.GET['search'])) | \
                                      Anime.objects.filter(alternative_title__title__icontains=str(request.GET['search']))
-        cquery = anime.order_by("name").distinct()
+        cquery = anime.order_by("name").distinct().order_by("-type__type", "name")
         serializer = AnimeSerializer(cquery, many=True)
         return Response(serializer.data)
 
@@ -37,7 +37,7 @@ def GetGenresAPI(request):
 def SearchByGenreAPI(request):
     if request.method == 'GET':
         genre   = request.GET['genre']
-        qs      = Anime.objects.filter(categorie__id=genre)
+        qs      = Anime.objects.filter(categorie__id=genre).order_by("-type__type", "name")
         serializer = AnimeSerializer(qs, many=True)
         return Response(serializer.data)
 
@@ -53,13 +53,13 @@ def SeasonSearchAPI(request):
         season = request.GET['season']
         year = request.GET['year']
         if season == 'winter':
-            anime = Anime.objects.filter(aired__month__in=winter, aired__year=year).order_by("?")
+            anime = Anime.objects.filter(aired__month__in=winter, aired__year=year).order_by("-type__type", "name")
         elif season == 'spring':
-            anime = Anime.objects.filter(aired__month__in=spring, aired__year=year).order_by("?")
+            anime = Anime.objects.filter(aired__month__in=spring, aired__year=year).order_by("-type__type", "name")
         elif season == 'summer':
-            anime = Anime.objects.filter(aired__month__in=summer, aired__year=year).order_by("?")
+            anime = Anime.objects.filter(aired__month__in=summer, aired__year=year).order_by("-type__type", "name")
         elif season == 'fall':
-            anime = Anime.objects.filter(aired__month__in=fall, aired__year=year).order_by("?")
+            anime = Anime.objects.filter(aired__month__in=fall, aired__year=year).order_by("-type__type", "name")
         serializer = AnimeSerializer(anime, many=True)
         return Response(serializer.data)
 

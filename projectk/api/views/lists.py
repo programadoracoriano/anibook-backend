@@ -32,7 +32,20 @@ def AnimeDetailsAPI(request):
         getId = request.GET['id']
         getAnime = Anime.objects.get(id=getId)
         serializer = AnimeSerializer(getAnime)
-    return Response(serializer.data)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+@authentication_classes([])
+def GetAnimeDetailsExtraAPI(request):
+    if request.method == 'GET':
+        getId       = request.GET['id']
+        watching    = AnimeStatus.objects.filter(anime__id=getId, status__val=1).count()
+        completed   = AnimeStatus.objects.filter(anime__id=getId, status__val=2).count()
+        dropped     = AnimeStatus.objects.filter(anime__id=getId, status__val=3).count()
+        plan        = AnimeStatus.objects.filter(anime__id=getId, status__val=5).count()
+        data        = {"watching":watching, "completed":completed, "dropped":dropped, "plan":plan}
+        return Response(data)
+
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -239,7 +252,7 @@ def GetScoreAPI(request):
     if request.method == 'GET':
         anId            = request.GET['id']
         getAnime        = Anime.objects.annotate(total_score=Avg('animestatus__score', output_field=FloatField())).get(id=anId)
-        tscore = {"total_score":getAnime.total_score}
+        tscore          = {"total_score":getAnime.total_score}
         return Response(tscore)
 
 @api_view(['POST', 'GET'])
