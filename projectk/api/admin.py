@@ -43,8 +43,8 @@ class StudioAdmin(admin.ModelAdmin):
 
 class StreamSourceAdmin(admin.ModelAdmin):
     model = StreamSource
-    list_display = ('source', )
-    search_fields = ('id','source', )
+    list_display = ('id', )
+    search_fields = ('id', )
 
 class SeasonNumberAdmin(admin.ModelAdmin):
     model = SeasonNumber
@@ -70,6 +70,11 @@ class DefaultAvatarAdmin(admin.ModelAdmin):
     model = DefaultAvatar
     list_display = ('tag',)
     search_fields = ('id', 'tag',)
+
+class StreamServiceAdmin(admin.ModelAdmin):
+    model = DefaultAvatar
+    list_display = ('id',)
+    search_fields = ('id', 'name',)
 
 
 

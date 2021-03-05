@@ -1,7 +1,7 @@
 from datetime import date
 
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
-#from rest_framework.parsers import MultiPartParser, JSONParser, FileUploadParser
+from rest_framework.parsers import MultiPartParser, JSONParser, FileUploadParser
 from rest_framework.response import Response
 #from rest_framework.permissions import IsAuthenticated  # <-- Here
 from django.contrib.auth import authenticate, login, logout
@@ -82,6 +82,17 @@ def LoginAPI(request):            # <-- And here
         else:
             message = {"msg": "Some error has occured"}
         return Response(content)
+
+@api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
+@parser_classes([FileUploadParser])
+def UploadUserImage(request):
+    if request.method == 'POST':
+        getProfile = Profile.objects.get(user=request.user)
+        image = request.data['image']
+        getProfile.image = image
+        getProfile.save()
+        return Response({"success":"Image Successfully Changed."})
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
