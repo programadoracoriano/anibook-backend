@@ -215,3 +215,6 @@ class CollectPoint(models.Model):
 
 
 
+
+
+

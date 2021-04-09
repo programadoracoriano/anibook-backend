@@ -20,6 +20,7 @@ urlpatterns = [
     path('get/anime/status/', getStatusAPI, name="statusapi"),
     path('get/anime/studio/', ShowAnimeStudioAPI, name="animestudio"),
     path('get/studio/', StudioAPI, name="studio"),
+    path('anime/randomizer/', RandomizerAPI, name="randomizerapi"),
     #Delete Urls
     path('delete/customlist/', DeleteCustomListAPI, name="deletecustomlist"),
     path('delete/anime/customlist/', DeleteAnimeCustomListAPI, name="deleteanimecustomlist"),

@@ -77,10 +77,10 @@ class AnimeSerializer(serializers.ModelSerializer):
     source          = SourceSerializer(read_only=True)
     licensors       = LicensorSerializer(read_only=True, many=True)
     producers       = ProducerSerializer(read_only=True, many=True)
-
+    season_number   = SeasonNumberSerializer(read_only=True, many=False)
     class Meta:
         model   = Anime
-        fields  = ('id', 'name', 'episodes_number', 'minutes_per_episode', 'aired','sinopse', 'image_url', 'cover_image_url'
+        fields  = ('id', 'name', 'season_number','episodes_number', 'minutes_per_episode', 'aired','sinopse', 'image_url', 'cover_image_url'
                    ,'studio', 'categorie', 'rating', 'type', 'source', 'licensors', 'producers', 'trailer')
 
 

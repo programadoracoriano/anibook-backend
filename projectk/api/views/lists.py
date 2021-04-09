@@ -348,18 +348,15 @@ def StudioAPI(request):
         serializer = StudioSerializer(qs, many=False)
         return Response(serializer.data)
 
-
-
-
-
-
-
-'''@api_view(['GET'])
-@authentication_classes([TokenAuthentication])
+@api_view(['GET'])
+@authentication_classes([])
 def RandomizerAPI(request):
     if request.method == 'GET':
         genre       = request.GET['genre']
-        getRandom   = '''
+        qs          = Anime.objects.filter(categorie__id=genre, season_number__val=1).order_by("?").first()
+        serializer  = AnimeSerializer(qs, many=False)
+        return Response(serializer.data)
+
 
 #begin delete section
 @api_view(['GET'])
