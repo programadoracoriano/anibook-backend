@@ -69,6 +69,12 @@ class SeasonNumberSerializer(serializers.ModelSerializer):
         model   = SeasonNumber
         fields  = ('id', 'val', 'tag')
 
+class DateOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model   = DateOption
+        fields  = ('id', 'tag')
+
+
 class AnimeSerializer(serializers.ModelSerializer):
     categorie       = CategorieSerializer(read_only=True, many=True)
     studio          = StudioSerializer(read_only=True, many=True)
@@ -78,9 +84,10 @@ class AnimeSerializer(serializers.ModelSerializer):
     licensors       = LicensorSerializer(read_only=True, many=True)
     producers       = ProducerSerializer(read_only=True, many=True)
     season_number   = SeasonNumberSerializer(read_only=True, many=False)
+    date_option     = DateOptionSerializer(read_only=True, many=False)
     class Meta:
         model   = Anime
-        fields  = ('id', 'name', 'season_number','episodes_number', 'minutes_per_episode', 'aired','sinopse', 'image_url', 'cover_image_url'
+        fields  = ('id', 'name', 'season_number','episodes_number', 'minutes_per_episode', 'date_option', 'aired', 'sinopse', 'image_url', 'cover_image_url'
                    ,'studio', 'categorie', 'rating', 'type', 'source', 'licensors', 'producers', 'trailer')
 
 
