@@ -87,7 +87,7 @@ class AnimeSerializer(serializers.ModelSerializer):
     date_option     = DateOptionSerializer(read_only=True, many=False)
     class Meta:
         model   = Anime
-        fields  = ('id', 'name', 'season_number','episodes_number', 'minutes_per_episode', 'date_option', 'aired', 'sinopse', 'image_url', 'cover_image_url'
+        fields  = ('id', 'name', 'season_number','episodes_number', 'minutes_per_episode', 'date_option', 'aired', 'date_end', 'sinopse', 'image_url', 'cover_image_url'
                    ,'studio', 'categorie', 'rating', 'type', 'source', 'licensors', 'producers', 'trailer')
 
 
