@@ -86,7 +86,7 @@ def LoginAPI(request):            # <-- And here
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 @parser_classes([FileUploadParser])
-def UploadUserImage(request):
+def UploadUserImageAPI(request):
     if request.method == 'POST':
         getProfile = Profile.objects.get(user=request.user)
         image = request.data['image']
