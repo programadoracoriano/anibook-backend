@@ -1,4 +1,5 @@
 import base64
+from django.core.files.base import ContentFile
 from datetime import date
 
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
