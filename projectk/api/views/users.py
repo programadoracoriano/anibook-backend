@@ -87,15 +87,16 @@ def LoginAPI(request):            # <-- And here
 @authentication_classes([TokenAuthentication])
 def UploadUserImageAPI(request):
     if request.method == 'POST':
-        msg = {}
+        msg     = {}
         getProfile = Profile.objects.get(user=request.user)
-        data = request.data['image']
+        data    = request.data['image']
         format, image_str = data.split(';base64,')
-        ext = format.split('/')[-1]
-        data = ContentFile(base64.b64decode(image_str), name='usr_.' + ext) # You can save this as $
+        ext     = format.split('/')[-1]
+         # You can save this as $
         if data is None:
             msg = {"msg": "Some error has occured"}
         else:
+            data = ContentFile(base64.b64decode(image_str), name='usr_.' + ext)
             getProfile.image = data
             getProfile.save()
             msg = {"msg": "Image Successfully Changed"}
