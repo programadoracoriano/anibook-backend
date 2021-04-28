@@ -1,3 +1,4 @@
+import base64
 from datetime import date
 
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
