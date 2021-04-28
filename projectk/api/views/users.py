@@ -5,7 +5,7 @@ from datetime import date
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.parsers import MultiPartParser, JSONParser, FileUploadParser
 from rest_framework.response import Response
-#from rest_framework.permissions import IsAuthenticated  # <-- Here
+from rest_framework.permissions import IsAuthenticated  # <-- Here
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
@@ -312,6 +312,7 @@ def getReviewAPI(request):
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
+@permission_classes((IsAuthenticated,))
 def getMyReviewAPI(request):
     if request.method == 'GET':
         id              = request.GET['id']
