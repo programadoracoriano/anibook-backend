@@ -85,14 +85,42 @@ def LoginAPI(request):            # <-- And here
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
-@parser_classes([FileUploadParser])
 def UploadUserImageAPI(request):
     if request.method == 'POST':
+        msg = {}
         getProfile = Profile.objects.get(user=request.user)
-        image = request.data['image']
-        getProfile.image = image
-        getProfile.save()
-        return Response({"success":"Image Successfully Changed."})
+        data = request.data['image']
+        format, image_str = data.split(';base64,')
+        ext = format.split('/')[-1]
+        data = ContentFile(base64.b64decode(image_str), name='usr_.' + ext) # You can save this as $
+        if data is None:
+            msg = {"msg": "Some error has occured"}
+        else:
+            getProfile.image = data
+            getProfile.save()
+            msg = {"msg": "Image Successfully Changed"}
+        return Response(msg)
+
+
+@api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
+def EmailChangeAPI(request):
+    if request.method == 'POST':
+        msg         = {}
+        email       = request.data['email']
+        countMail   = User.objects.filter(email=email).count() 
+        if email is None:
+            msg = {"msg":"You need to Insert a E-mail"}
+        elif countMail > 0:
+            msg = {"msg":"This E-mail is Already Registered!"}
+        else:
+            getUser         = User.objects.get(id=request.user.id)
+            getUser.email   = email
+            getUser.save()
+            msg = {"msg":"E-mail successfully changed"}
+        return Response(msg)
+
+
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])

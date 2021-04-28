@@ -19,6 +19,7 @@ urlpatterns = [
     path('get/user/profile/extra/', UserExtraDetailsAPI, name="userextradetails"),
     path('get/profile/', ProfileAPI, name="getprofile"),
     path('get/user/data/', UserDataAPI, name="getuserdata"),
+    path('change/user/email/', EmailChangeAPI, name="emailchange"),
     path('upload/profile/image/', UploadUserImageAPI, name="uploaduserimage"),
 
     #followers urls

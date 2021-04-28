@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True, many=False)
     class Meta:
         model = User
-        fields = ('id', 'username', 'profile')
+        fields = ('id', 'username', 'profile', 'email')
 
 class CategorieSerializer(serializers.ModelSerializer):
     class Meta:
