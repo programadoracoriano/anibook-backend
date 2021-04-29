@@ -106,7 +106,7 @@ def UploadUserImageAPI(request):
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
-def UploadCoverAPI(request):
+def UploadUserCoverAPI(request):
     if request.method == 'POST':
         msg     = {}
         getProfile = Profile.objects.get(user=request.user)

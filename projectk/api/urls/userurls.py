@@ -21,6 +21,7 @@ urlpatterns = [
     path('get/user/data/', UserDataAPI, name="getuserdata"),
     path('change/user/email/', EmailChangeAPI, name="emailchange"),
     path('upload/profile/image/', UploadUserImageAPI, name="uploaduserimage"),
+    path('upload/profile/cover/', UploadUserCoverAPI, name="uploadusercover"),
 
     #followers urls
     path('get/follower/', FollowerAPI, name="followers"),
