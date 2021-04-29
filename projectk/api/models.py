@@ -18,12 +18,19 @@ class Profile(models.Model):
   image       = ResizedImageField(size=[200, 200], quality=80, keep_meta=False,
                             upload_to='media/profile/', force_format='JPEG',
                             default='profile/user-placeholder.png', null=True)
+  cover       = ResizedImageField(size=[300, 300], quality=80, keep_meta=False,
+                            upload_to='media/profile/covers/', force_format='JPEG',
+                            default='profile/user-placeholder.png', null=True)
   points      = models.IntegerField(null=True, blank=True, default=0)
   genres      = models.ManyToManyField(Categorie, null=True, blank=True)
 
   @property
   def image_url(self):
       return "{0}{1}".format(settings.SITE_URL, self.image.url)
+
+  @property
+  def cover_url(self):
+      return "{0}{1}".format(settings.SITE_URL, self.cover.url)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

@@ -104,6 +104,25 @@ def UploadUserImageAPI(request):
             msg = {"msg": "Image Successfully Changed"}
         return Response(msg)
 
+@api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
+def UploadCoverAPI(request):
+    if request.method == 'POST':
+        msg     = {}
+        getProfile = Profile.objects.get(user=request.user)
+        data    = request.data['image']
+        format, image_str = data.split(';base64,')
+        ext     = format.split('/')[-1]
+         # You can save this as $
+        if data is None:
+            msg = {"msg": "Some error has occured"}
+        else:
+            data = ContentFile(base64.b64decode(image_str), name='usr_.' + ext)
+            getProfile.cover = data
+            getProfile.save()
+            msg = {"msg": "Cover Successfully Changed"}
+        return Response(msg)
+
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
@@ -312,15 +331,14 @@ def getReviewAPI(request):
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
-@permission_classes((IsAuthenticated,))
 def getMyReviewAPI(request):
     if request.method == 'GET':
         id              = request.GET['id']
         qs              = None
         msg     = {'default':True}
-        countReviews    =  AnimeReview.objects.filter(anime__id=id, user=request.user).count()
+        countReviews    =  AnimeReview.objects.filter(anime__id=id, user__id=request.user.id).count()
         if countReviews > 0:
-            qs          = AnimeReview.objects.get(anime__id=id, user=request.user)
+            qs          = AnimeReview.objects.get(anime__id=id, user__id=request.user.id)
             serializer  = AnimeReviewSerializer(qs)
             msg         = serializer.data
         return Response(msg)
