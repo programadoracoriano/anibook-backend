@@ -76,7 +76,15 @@ class StreamServiceAdmin(admin.ModelAdmin):
     list_display = ('id',)
     search_fields = ('id', 'name',)
 
+class ReportMotiveAdmin(admin.ModelAdmin):
+    model = ReportMotive
+    list_display = ('motive', 'id')
+    search_fields = ('id', 'motive',)
 
+class ReportSectionAdmin(admin.ModelAdmin):
+    model = ReportSection
+    list_display = ('type', 'pid')
+    search_fields = ('id', 'pid', 'type')
 
 
 
@@ -100,5 +108,7 @@ admin.site.register(Status)
 admin.site.register(DefaultAvatar, DefaultAvatarAdmin)
 admin.site.register(CustomList)
 admin.site.register(DateOption)
+admin.site.register(ReportMotive, ReportMotiveAdmin)
+admin.site.register(ReportSection, ReportSectionAdmin)
 
 

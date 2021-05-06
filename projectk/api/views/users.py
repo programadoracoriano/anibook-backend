@@ -1,7 +1,7 @@
 import base64
 from django.core.files.base import ContentFile
 from datetime import date
-
+from django.core.mail import send_mail
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.parsers import MultiPartParser, JSONParser, FileUploadParser
 from rest_framework.response import Response
@@ -404,6 +404,31 @@ def GetFollowerUpdatesAPI(request):
         qs = AnimeStatus.objects.filter(user__pk__in=listF).order_by("-date")
         serializer = AnimeStatusSerializer(qs, many=True)
         return Response(serializer.data)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def ReportMotiveAPI(request):
+    if request.method == 'GET':
+        qs          = ReportMotive.objects.order_by("motive")
+        serializer  = ReportMotiveSerializer(qs, many=True)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def ReportAPI(request):
+    if request.method == 'GET':
+        user            = request.user
+        motiveId        = request.GET['motive']
+        type            = request.GET['type']
+        pid             = request.GET['pid']
+        motive          = ReportMotive.objects.get(id=motiveId) #instance motive
+        qs              = ReportMotive.objects.create(user=user, type=type, pid=pid, motive=motive)
+        subject         = 'Report - %s' % (type)
+        msgBody         = 'We are sending you a report of user %s about %s with id %s because of %s' % (request.user.username, type, pid, motive.motive)
+        send_mail(subject, msgBody, 'report.anibook@programadoracoriano.com', ['report.anibook@programadoracoriano.com', ])
+        msgStr          = '%s successfully reported' % (type)
+        msg             = {'msg': msgStr}
+        return Response(msg)
 
 
 

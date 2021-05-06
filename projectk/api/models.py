@@ -214,7 +214,17 @@ class CollectPoint(models.Model):
     user = models.ForeignKey(User, null=False, blank=False, verbose_name="User", on_delete=models.CASCADE)
     date = models.DateField(auto_now=True)
 
+class ReportMotive(models.Model):
+    motive = models.CharField(max_length=100, blank=False, null=False, verbose_name="Motive")
+    def __str__(self):
+        return self.motive
 
+class ReportSection(models.Model):
+    user    = models.ForeignKey(User, null=False, blank=False, verbose_name="User", on_delete=models.CASCADE)
+    type    = models.CharField(max_length=100, blank=False, null=False, verbose_name="Type")
+    pid     = models.CharField(max_length=100, blank=False, null=False, verbose_name="ID")
+    motive  = models.ForeignKey(ReportMotive, null=False, blank=False, verbose_name="Motive", on_delete=models.CASCADE)
+    date    = models.DateField(auto_now=True)
 
 
 

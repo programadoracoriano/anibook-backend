@@ -37,6 +37,10 @@ urlpatterns = [
     path('get/my/review/', getMyReviewAPI, name="getmyreview"),
     path('get/my/reviews/', MyReviewsAPI, name="getmyreviews"),
 
+    #report
+    path('get/report/motive/', ReportMotiveAPI, name="reportmotive"),
+    path('report/content/', ReportAPI, name="reportapi")
+
     #collect points
     path('user/collectpoint/', collectPointsAPI, name="collectpoint"),
 

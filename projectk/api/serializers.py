@@ -141,9 +141,17 @@ class TopicSerializer(serializers.ModelSerializer):
         model   = Topic
         fields  = ('id' , 'user', 'categorie', 'title', 'description', 'date')
 
+class ReportMotiveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model   = ReportMotive
+        fields  = ('id' , 'motive', )
 
-
-
+class ReportSectionSerializer(serializers.ModelSerializer):
+    user        = UserSerializer(read_only=True, many=False)
+    motive      = ReportMotiveSerializer(read_only=True, many=False)
+    class Meta:
+        model   = ReportMotive
+        fields  = ('id' , 'user', 'type', 'pid', 'motive', 'date')
 
 
 
