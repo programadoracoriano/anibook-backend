@@ -402,7 +402,7 @@ def GetFollowerUpdatesAPI(request):
         getFollowers = Followers.objects.filter(follower=request.user)
         for i in getFollowers:
             listF.append(i.followers)
-        qs = AnimeStatus.objects.filter(user__pk__in=listF).exclude(anime__categorie__id__in=getProfile.genres.values_list('id', flat=True)).order_by("-date")
+        qs = AnimeStatus.objects.filter(user__pk__in=listF).exclude(anime__categorie__id__in=getProfile.rating.values_list('id', flat=True)).order_by("-date")
         serializer = AnimeStatusSerializer(qs, many=True)
         return Response(serializer.data)
 
@@ -433,17 +433,59 @@ def ReportAPI(request):
 
 
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def GetRatingAPI(request):
+    if request.method == 'GET':
+        qs          = Rating.objects.order_by("id")
+        serializer  = RatingSerializer(qs, many=True)
+        return Response(serializer.data)
+
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
-def AddGenreFilterAPI(request):
+def AddRatingFilterAPI(request):
     if request.method == 'POST':
-        genreId     = request.data['genre']
-        getGenre    = Categorie.objects.get(id=genreId)
+        ratingId     = request.data['rating']
+        getRating    = Rating.objects.get(id=ratingId)
         profile     = Profile.objects.get(user=request.user)
-        qs          = profile.genres.add(getGenre)
-        qs.save()
-        msg         =  {"msg": "Genre excluded Successfully!"}
+        qs          = profile.rating.add(getRating)
+        msg         =  {"msg": "Rating excluded Successfully!"}
     return Response(msg)
+
+@api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
+def RemoveRatingFilterAPI(request):
+    if request.method == 'POST':
+        ratingId     = request.data['rating']
+        getRating    = Rating.objects.get(id=ratingId)
+        profile     = Profile.objects.get(user=request.user)
+        qs          = profile.rating.remove(getRating)
+        msg         =  {"msg": "Rating excluded Successfully!"}
+    return Response(msg)
+
+@api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
+def AddBlockUserAPI(request):
+    if request.method == 'POST':
+        userId     = request.data['user']
+        getUser    = User.objects.get(id=userId)
+        profile    = Profile.objects.get(user=request.user)
+        qs          = profile.blockuser.add(getUser)
+        msg         =  {"msg": "User successfully Blocked!"}
+    return Response(msg)
+
+@api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
+def RemoveBlockUserAPI(request):
+    if request.method == 'POST':
+        userId     = request.data['user']
+        getUser    = User.objects.get(id=userId)
+        profile    = Profile.objects.get(user=request.user)
+        qs          = profile.blockuser.remove(getUser)
+
+        msg         =  {"msg": "User successfully unblocked!"}
+    return Response(msg)
+
 
 
 

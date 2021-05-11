@@ -22,6 +22,8 @@ urlpatterns = [
     path('change/user/email/', EmailChangeAPI, name="emailchange"),
     path('upload/profile/image/', UploadUserImageAPI, name="uploaduserimage"),
     path('upload/profile/cover/', UploadUserCoverAPI, name="uploadusercover"),
+    path('get/rating/', GetRatingAPI, name="getratingapi"),
+
 
     #followers urls
     path('get/follower/', FollowerAPI, name="followers"),
@@ -42,8 +44,10 @@ urlpatterns = [
     path('report/content/', ReportAPI, name="reportapi"),
 
     #filters
-    path('add/genre/filter/', AddGenreFilterAPI, name="addgenrefilter"),
-
+    path('add/rating/filter/', AddRatingFilterAPI, name="addratingfilter"),
+    path('remove/rating/filter/', RemoveRatingFilterAPI, name="removeratingfilter"),
+    path('block/user/', AddBlockUserAPI, name="addblockuser"),
+    path('unblock/user/', RemoveBlockUserAPI, name="removeblockuser"),
 
     #collect points
     path('user/collectpoint/', collectPointsAPI, name="collectpoint"),

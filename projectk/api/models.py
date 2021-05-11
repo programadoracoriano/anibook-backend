@@ -13,6 +13,12 @@ class Categorie(models.Model):
     def __str__(self):
         return self.categorie
 
+class Rating(models.Model):
+    rating = models.CharField(max_length=150, null=False, blank=False, verbose_name="Rating")
+
+    def __str__(self):
+        return self.rating
+
 class Profile(models.Model):
   user        = models.OneToOneField(User, on_delete=models.CASCADE)
   image       = ResizedImageField(size=[200, 200], quality=80, keep_meta=False,
@@ -22,8 +28,8 @@ class Profile(models.Model):
                             upload_to='media/profile/covers/', force_format='JPEG',
                             default='profile/user-placeholder.png', null=True)
   points      = models.IntegerField(null=True, blank=True, default=0)
-  genres      = models.ManyToManyField(Categorie)
   blockuser   = models.ManyToManyField(User)
+  rating      = models.ManyToManyField(Rating)
 
   @property
   def image_url(self):
