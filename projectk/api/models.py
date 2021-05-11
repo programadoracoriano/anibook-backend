@@ -22,7 +22,8 @@ class Profile(models.Model):
                             upload_to='media/profile/covers/', force_format='JPEG',
                             default='profile/user-placeholder.png', null=True)
   points      = models.IntegerField(null=True, blank=True, default=0)
-  genres      = models.ManyToManyField(Categorie, null=True, blank=True)
+  genres      = models.ManyToManyField(Categorie)
+  blockuser   = models.ManyToManyField(User)
 
   @property
   def image_url(self):

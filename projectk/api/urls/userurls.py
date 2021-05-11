@@ -39,7 +39,11 @@ urlpatterns = [
 
     #report
     path('get/report/motive/', ReportMotiveAPI, name="reportmotive"),
-    path('report/content/', ReportAPI, name="reportapi")
+    path('report/content/', ReportAPI, name="reportapi"),
+
+    #filters
+    path('add/genre/filter/', AddGenreFilterAPI, name="addgenrefilter"),
+
 
     #collect points
     path('user/collectpoint/', collectPointsAPI, name="collectpoint"),

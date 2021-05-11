@@ -397,11 +397,12 @@ def TopicAPI(request):
 @authentication_classes([TokenAuthentication])
 def GetFollowerUpdatesAPI(request):
     if request.method == 'GET':
+        getProfile = Profile.objects.get(user=request.user)
         listF = []
         getFollowers = Followers.objects.filter(follower=request.user)
         for i in getFollowers:
             listF.append(i.followers)
-        qs = AnimeStatus.objects.filter(user__pk__in=listF).order_by("-date")
+        qs = AnimeStatus.objects.filter(user__pk__in=listF).exclude(anime__categorie__id__in=getProfile.genres.values_list('id', flat=True)).order_by("-date")
         serializer = AnimeStatusSerializer(qs, many=True)
         return Response(serializer.data)
 
@@ -422,13 +423,25 @@ def ReportAPI(request):
         type            = request.GET['type']
         pid             = request.GET['pid']
         motive          = ReportMotive.objects.get(id=motiveId) #instance motive
-        qs              = ReportMotive.objects.create(user=user, type=type, pid=pid, motive=motive)
+        qs              = ReportSection.objects.create(user=user, type=type, pid=pid, motive=motive)
         subject         = 'Report - %s' % (type)
         msgBody         = 'We are sending you a report of user %s about %s with id %s because of %s' % (request.user.username, type, pid, motive.motive)
         send_mail(subject, msgBody, 'report.anibook@programadoracoriano.com', ['report.anibook@programadoracoriano.com', ])
         msgStr          = '%s successfully reported' % (type)
         msg             = {'msg': msgStr}
         return Response(msg)
+
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def AddGenreFilterAPI(request):
+    genreId     = request.GET['genre']
+    getGenre    = Categorie.objects.get(id=genreId)
+    qs          = Profile.genres.add(getGenre)
+    qs.save()
+    msg         =  {"msg":"Genre excluded Successfully!"}
+    return Response(msg)
 
 
 
