@@ -433,14 +433,16 @@ def ReportAPI(request):
 
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def AddGenreFilterAPI(request):
-    genreId     = request.GET['genre']
-    getGenre    = Categorie.objects.get(id=genreId)
-    qs          = Profile.genres.add(getGenre)
-    qs.save()
-    msg         =  {"msg":"Genre excluded Successfully!"}
+    if request.method == 'POST':
+        genreId     = request.data['genre']
+        getGenre    = Categorie.objects.get(id=genreId)
+        profile     = Profile.objects.get(user=request.user)
+        qs          = profile.genres.add(getGenre)
+        qs.save()
+        msg         =  {"msg": "Genre excluded Successfully!"}
     return Response(msg)
 
 
