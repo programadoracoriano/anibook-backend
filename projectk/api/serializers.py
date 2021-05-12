@@ -6,7 +6,19 @@ from django.contrib.auth.models import User
 from rest_framework.serializers import ReadOnlyField
 
 
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ('id', 'rating',)
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id',)
+
 class ProfileSerializer(serializers.ModelSerializer):
+    blockeduser = UserProfileSerializer(read_only=True, many=True)
+    rating      = RatingSerializer(read_only=True, many=True)
     class Meta:
         model = Profile
         fields = ('id', 'user', 'image_url', 'cover_url', 'points',)
@@ -42,12 +54,6 @@ class ProducerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Producer
         fields = ('id', 'name')
-
-
-class RatingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Rating
-        fields = ('id', 'rating',)
 
 class AnimeTypeSerializer(serializers.ModelSerializer):
     class Meta:

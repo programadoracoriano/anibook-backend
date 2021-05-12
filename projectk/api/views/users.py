@@ -2,11 +2,11 @@ import base64
 from django.core.files.base import ContentFile
 from datetime import date
 from django.core.mail import send_mail
-from rest_framework.authentication import TokenAuthentication, SessionAuthentication
-from rest_framework.parsers import MultiPartParser, JSONParser, FileUploadParser
+from rest_framework.authentication import TokenAuthentication
+
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated  # <-- Here
-from django.contrib.auth import authenticate, login, logout
+
+from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
@@ -15,7 +15,7 @@ from ..models import *
 from ..serializers import *
 from django.db.models import Avg, Sum, FloatField, F, Count, Q
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes, authentication_classes, parser_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @api_view(['GET'])
@@ -166,6 +166,7 @@ def DefaulAvatarAPI(request):
 @authentication_classes([TokenAuthentication])
 def UserDetailsAPI(request):
     if request.method == 'GET':
+        getProfile = Profile.objects.get(user=request.user)
         uId         = request.GET['id']
         user        = User.objects.get(id=uId)
         serializer  = UserSerializer(user)
@@ -250,9 +251,10 @@ def DetectFollowerAPI(request):
 @authentication_classes([TokenAuthentication])
 def ListFollowersAPI(request):
     if request.method == 'GET':
+        getProfile    = Profile.objects.get(user=request.user)
         followersList = []
-        follower = ''
-        getF = Followers.objects.filter(follower=request.user)
+        follower      = ''
+        getF = Followers.objects.filter(follower=request.user).exclude(followers__id__in=getProfile.blockuser.values_list('id', flat=True))
         for i in getF:
             followersList.append(i.followers)
         qs = User.objects.filter(id__in=followersList)
@@ -271,8 +273,9 @@ def ListFollowersAPI(request):
 @authentication_classes([TokenAuthentication])
 def ListFollowingAPI(request):
     if request.method == 'GET':
+        getProfile = Profile.objects.get(user=request.user)
         follower = ''
-        qs = Followers.objects.filter(followers=request.user.id)
+        qs = Followers.objects.filter(followers=request.user.id).exclude(followers__id__in=getProfile.blockuser.values_list('id', flat=True))
         page = request.GET.get('page', 1)
         paginator = Paginator(qs, 15)
         try:
@@ -315,8 +318,9 @@ def AnimeReviewAPI(request):
 @authentication_classes([TokenAuthentication])
 def getAllReviewsAPI(request):
     if request.method == 'GET':
+        getProfile  = Profile.objects.get(user=request.user)
         id          = request.GET['id']
-        qs          = AnimeReview.objects.filter(anime__id=id, draft=1)
+        qs          = AnimeReview.objects.filter(anime__id=id, draft=1).exclude(user__id__in=getProfile.blockuser.values_list('id', flat=True))
         serializer  = AnimeReviewSerializer(qs, many=True)
         return Response(serializer.data)
 
@@ -402,7 +406,8 @@ def GetFollowerUpdatesAPI(request):
         getFollowers = Followers.objects.filter(follower=request.user)
         for i in getFollowers:
             listF.append(i.followers)
-        qs = AnimeStatus.objects.filter(user__pk__in=listF).exclude(anime__categorie__id__in=getProfile.rating.values_list('id', flat=True)).order_by("-date")
+        qs = AnimeStatus.objects.filter(user__pk__in=listF).exclude(anime__categorie__id__in=getProfile.rating.values_list('id', flat=True),
+                                                                    user__id__in=getProfile.blockuser.values_list('id', flat=True)).order_by("-date")
         serializer = AnimeStatusSerializer(qs, many=True)
         return Response(serializer.data)
 

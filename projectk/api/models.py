@@ -28,7 +28,7 @@ class Profile(models.Model):
                             upload_to='media/profile/covers/', force_format='JPEG',
                             default='profile/user-placeholder.png', null=True)
   points      = models.IntegerField(null=True, blank=True, default=0)
-  blockuser   = models.ManyToManyField(User)
+  blockuser   = models.ManyToManyField(User, related_name="blockuser")
   rating      = models.ManyToManyField(Rating)
 
   @property
@@ -92,12 +92,6 @@ class Source(models.Model):
     source    = models.CharField(max_length=150, null=False, blank=False, verbose_name="Source")
     def __str__(self):
         return self.source
-
-class Rating(models.Model):
-    rating = models.CharField(max_length=150, null=False, blank=False, verbose_name="Rating")
-
-    def __str__(self):
-        return self.rating
 
 class DateOption(models.Model):
     tag     = models.CharField(max_length=150, null=False, blank=False, verbose_name="Date Option")

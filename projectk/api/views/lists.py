@@ -1,20 +1,12 @@
 import datetime
-
-from rest_framework.authentication import TokenAuthentication, SessionAuthentication
-#from rest_framework.parsers import MultiPartParser, JSONParser, FileUploadParser
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
-#from rest_framework.permissions import IsAuthenticated  # <-- Here
-from django.contrib.auth import authenticate, login, logout
-from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import User
-from rest_framework.views import APIView
-
 from ..models import *
 from ..serializers import *
 from django.db.models import Avg, Sum, FloatField, F, Count
-from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes, authentication_classes, parser_classes
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+from rest_framework.decorators import api_view,  authentication_classes
+
 
 
 @api_view(['GET'])
@@ -297,7 +289,7 @@ def AnimeCustomListAPI(request):
     if request.method == 'POST':
         cList       = request.data['id']
         animeId     = request.data['anime']
-        getCList    = CustomList.objects.get(id=cList)
+        getCList    = CustomList.objects.get(id=cList, user=request.user)
         getAnime    = Anime.objects.get(id=animeId)
         msg         = {}
 
@@ -320,15 +312,16 @@ def AnimeCustomListAPI(request):
 @authentication_classes([])
 def PublicCustomListAPI(request):
     if request.method == 'GET':
-        status = request.GET['status']
-        qs = ''
+        getProfile  = Profile.objects.get(user=request.iser)
+        status      = request.GET['status']
+        qs          = ''
         if status == '0':
             qs = CustomList.objects.order_by("?")
         elif status == '1':
             qs = CustomList.objects.order_by("-id")
         elif status == '2':
             user = request.GET['user']
-            qs = CustomList.objects.filter(user__id=user)
+            qs = CustomList.objects.filter(user__id=user).exclude(user__id__in=getProfile.blockuser.values_list('id', flat=True))
         serializer = CustomListSerializer(qs, many=True)
         return Response(serializer.data)
 
