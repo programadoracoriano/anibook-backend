@@ -67,9 +67,12 @@ def SeasonSearchAPI(request):
 @authentication_classes([TokenAuthentication])
 def UserSearchAPI(request):
     if request.method == 'GET':
+        search = request.GET['search']
         getProfile  = Profile.objects.get(user=request.user)
-        search      = request.GET['search']
-        query       = User.objects.filter(username__icontains=search).exclude(id__in=getProfile.blockuser.values_list('id', flat=True))
+        ifBlocked   = Profile.objects.filter(user__username__icontains=search, blockuser=request.user)
+        query_1     = User.objects.filter(username__icontains=search).exclude(id__in=ifBlocked.values_list('user__id', flat=True))
+        query_2     = User.objects.filter(username__icontains=search).exclude(id__in=getProfile.blockuser.values_list('id', flat=True))
+        query       = query_1 | query_2
         serializer  = UserSerializer(query, many=True)
         return Response(serializer.data)
 

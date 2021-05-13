@@ -21,7 +21,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     rating      = RatingSerializer(read_only=True, many=True)
     class Meta:
         model = Profile
-        fields = ('id', 'user', 'image_url', 'cover_url', 'points',)
+        fields = ('id', 'user', 'image_url', 'cover_url', 'blockeduser', 'rating','points',)
 
 class DefaultAvatarSerializer(serializers.ModelSerializer):
     class Meta:

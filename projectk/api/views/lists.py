@@ -302,17 +302,18 @@ def AnimeCustomListAPI(request):
             msg = {'msg':'Anime Added Successfully!'}
         return Response(msg)
     if request.method == 'GET':
+        getProfile = Profile.objects.get(user=request.user)
         customId = request.GET['id']
-        qs = AnimeCustomList.objects.filter(custom_list__id=customId).order_by("anime__name")
+        qs = AnimeCustomList.objects.filter(custom_list__id=customId).order_by("anime__name").exclude(user__id__in=getProfile.blockuser.values_list('id', flat=True))
         serializer = AnimeCustomListSerializer(qs, many=True)
         return Response(serializer.data)
 
 
 @api_view(['GET'])
-@authentication_classes([])
+@authentication_classes([TokenAuthentication])
 def PublicCustomListAPI(request):
     if request.method == 'GET':
-        getProfile  = Profile.objects.get(user=request.iser)
+        getProfile  = Profile.objects.get(user=request.user)
         status      = request.GET['status']
         qs          = ''
         if status == '0':
