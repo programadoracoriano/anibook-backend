@@ -252,9 +252,12 @@ def DetectFollowerAPI(request):
 def ListFollowersAPI(request):
     if request.method == 'GET':
         getProfile    = Profile.objects.get(user=request.user)
+        ifBlocked     = Profile.objects.filter(blockuser=request.user)
         followersList = []
         follower      = ''
-        getF = Followers.objects.filter(follower=request.user).exclude(follower__id__in=getProfile.blockuser.values_list('id', flat=True))
+        getF = Followers.objects.filter(follower=request.user).exclude(follower__id__in=getProfile.blockuser.values_list('id', flat=True)).exclude(
+            id__in=ifBlocked.values_list('user', flat=True)
+        )
         for i in getF:
             followersList.append(i.followers)
         qs = User.objects.filter(id__in=followersList)
@@ -274,8 +277,11 @@ def ListFollowersAPI(request):
 def ListFollowingAPI(request):
     if request.method == 'GET':
         getProfile = Profile.objects.get(user=request.user)
+        ifBlocked  = Profile.objects.filter(blockuser=request.user)
         follower = ''
-        qs = Followers.objects.filter(followers=request.user.id).exclude(followers__in=getProfile.blockuser.values_list('id', flat=True))
+        qs = Followers.objects.filter(followers=request.user.id).exclude(followers__in=getProfile.blockuser.values_list('id', flat=True)).exclude(
+            followers__in=ifBlocked.values_list('user', flat=True)
+        )
         page = request.GET.get('page', 1)
         paginator = Paginator(qs, 15)
         try:
@@ -319,8 +325,11 @@ def AnimeReviewAPI(request):
 def getAllReviewsAPI(request):
     if request.method == 'GET':
         getProfile  = Profile.objects.get(user=request.user)
+        ifBlocked   = Profile.objects.filter(blockuser=request.user)
         id          = request.GET['id']
-        qs          = AnimeReview.objects.filter(anime__id=id, draft=1).exclude(user__id__in=getProfile.blockuser.values_list('id', flat=True))
+        qs          = AnimeReview.objects.filter(anime__id=id, draft=1).exclude(user__id__in=getProfile.blockuser.values_list('id', flat=True)).exclude(
+            user__id__in=ifBlocked.values_list('user', flat=True)
+        )
         serializer  = AnimeReviewSerializer(qs, many=True)
         return Response(serializer.data)
 
@@ -402,8 +411,11 @@ def TopicAPI(request):
 def GetFollowerUpdatesAPI(request):
     if request.method == 'GET':
         getProfile = Profile.objects.get(user=request.user)
+        ifBlocked = Profile.objects.filter(blockuser=request.user)
         listF = []
-        getFollowers = Followers.objects.filter(follower=request.user).exclude(followers__in=getProfile.blockuser.values_list('id', flat=True))
+        getFollowers = Followers.objects.filter(follower=request.user).exclude(followers__in=getProfile.blockuser.values_list('id', flat=True)).exclude(
+            followers__in=ifBlocked.values_list('user', flat=True)
+        )
         for i in getFollowers:
             listF.append(i.followers)
         qs = AnimeStatus.objects.filter(user__pk__in=listF).exclude(anime__categorie__id__in=getProfile.rating.values_list('id', flat=True)).order_by("-date")

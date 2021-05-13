@@ -303,8 +303,12 @@ def AnimeCustomListAPI(request):
         return Response(msg)
     if request.method == 'GET':
         getProfile = Profile.objects.get(user=request.user)
+        ifBlocked  = Profile.objects.filter(blockuser=request.user)
         customId = request.GET['id']
-        qs = AnimeCustomList.objects.filter(custom_list__id=customId).order_by("anime__name").exclude(user__id__in=getProfile.blockuser.values_list('id', flat=True))
+        qs = AnimeCustomList.objects.filter(custom_list__id=customId).order_by("anime__name").exclude(
+            user__id__in=getProfile.blockuser.values_list('id', flat=True)).exclude(
+            user__id__in=ifBlocked.values_list('user', flat=True)
+        )
         serializer = AnimeCustomListSerializer(qs, many=True)
         return Response(serializer.data)
 
@@ -314,15 +318,22 @@ def AnimeCustomListAPI(request):
 def PublicCustomListAPI(request):
     if request.method == 'GET':
         getProfile  = Profile.objects.get(user=request.user)
+        ifBlocked   = Profile.objects.filter(blockuser=request.user)
         status      = request.GET['status']
         qs          = ''
         if status == '0':
-            qs = CustomList.objects.order_by("?")
+            qs = CustomList.objects.exclude(user__id__in=getProfile.blockuser.values_list('id', flat=True)).exclude(
+                user__id__in=ifBlocked.values_list('user', flat=True)
+            ).order_by("?")
         elif status == '1':
-            qs = CustomList.objects.order_by("-id")
+            qs = CustomList.objects.exclude(user__id__in=getProfile.blockuser.values_list('id', flat=True)).exclude(
+                user__id__in=ifBlocked.values_list('user', flat=True)
+            ).order_by("-id")
         elif status == '2':
             user = request.GET['user']
-            qs = CustomList.objects.filter(user__id=user).exclude(user__id__in=getProfile.blockuser.values_list('id', flat=True))
+            qs = CustomList.objects.filter(user__id=user).exclude(user__id__in=getProfile.blockuser.values_list('id', flat=True)).exclude(
+                user__id__in=ifBlocked.values_list('user', flat=True)
+            )
         serializer = CustomListSerializer(qs, many=True)
         return Response(serializer.data)
 

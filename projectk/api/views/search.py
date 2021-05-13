@@ -1,9 +1,9 @@
-from rest_framework.authentication import TokenAuthentication, SessionAuthentication
-#from rest_framework.parsers import MultiPartParser, JSONParser, FileUploadParser
+from rest_framework.authentication import TokenAuthentication
+
 from rest_framework.response import Response
-#from rest_framework.permissions import IsAuthenticated  # <-- Here
-from django.contrib.auth import authenticate, login, logout
-from rest_framework.authtoken.models import Token
+
+
+
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
 
@@ -18,8 +18,13 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 @authentication_classes([])
 def AnimeSearchAPI(request):
     if request.method == 'GET':
-        anime = Anime.objects.filter(name__icontains=str(request.GET['search'])) | \
-                                     Anime.objects.filter(alternative_title__title__icontains=str(request.GET['search']))
+        getProfile = Profile.objects.get(request.user)
+        anime = Anime.objects.filter(name__icontains=str(request.GET['search'])).exclude(
+                rating__id=getProfile.values_list('rating', flat=True)
+            ) | \
+                                     Anime.objects.filter(alternative_title__title__icontains=str(request.GET['search'])).exclude(
+                rating__id=getProfile.values_list('rating', flat=True)
+            )
         cquery = anime.order_by("name").distinct().order_by("-type__type", "name")
         serializer = AnimeSerializer(cquery, many=True)
         return Response(serializer.data)
@@ -36,8 +41,11 @@ def GetGenresAPI(request):
 @authentication_classes([])
 def SearchByGenreAPI(request):
     if request.method == 'GET':
+        getProfile = Profile.objects.get(request.user)
         genre   = request.GET['genre']
-        qs      = Anime.objects.filter(categorie__id=genre).order_by("-type__type", "name")
+        qs      = Anime.objects.filter(categorie__id=genre).exclude(
+                rating__id=getProfile.values_list('rating', flat=True)
+            ).order_by("-type__type", "name")
         serializer = AnimeSerializer(qs, many=True)
         return Response(serializer.data)
 
@@ -45,21 +53,30 @@ def SearchByGenreAPI(request):
 @authentication_classes([])
 def SeasonSearchAPI(request):
     if request.method == 'GET':
-        winter = ['01', '02', '03']
-        spring = ['04', '05', '06']
-        summer = ['07', '08', '09']
-        fall = ['10', '11', '12']
-        anime = None
-        season = request.GET['season']
-        year = request.GET['year']
+        getProfile  = Profile.objects.get(request.user)
+        winter      = ['01', '02', '03']
+        spring      = ['04', '05', '06']
+        summer      = ['07', '08', '09']
+        fall        = ['10', '11', '12']
+        anime       = None
+        season      = request.GET['season']
+        year        = request.GET['year']
         if season == 'winter':
-            anime = Anime.objects.filter(aired__month__in=winter, aired__year=year).order_by("-type__type", "name")
+            anime = Anime.objects.filter(aired__month__in=winter, aired__year=year).exclude(
+                rating__id=getProfile.values_list('rating', flat=True)
+            ).order_by("-type__type", "name")
         elif season == 'spring':
-            anime = Anime.objects.filter(aired__month__in=spring, aired__year=year).order_by("-type__type", "name")
+            anime = Anime.objects.filter(aired__month__in=spring, aired__year=year).exclude(
+                rating__id=getProfile.values_list('rating', flat=True)
+            ).order_by("-type__type", "name")
         elif season == 'summer':
-            anime = Anime.objects.filter(aired__month__in=summer, aired__year=year).order_by("-type__type", "name")
+            anime = Anime.objects.filter(aired__month__in=summer, aired__year=year).exclude(
+                rating__id=getProfile.values_list('rating', flat=True)
+            ).order_by("-type__type", "name")
         elif season == 'fall':
-            anime = Anime.objects.filter(aired__month__in=fall, aired__year=year).order_by("-type__type", "name")
+            anime = Anime.objects.filter(aired__month__in=fall, aired__year=year).exclude(
+                rating__id=getProfile.values_list('rating', flat=True)
+            ).order_by("-type__type", "name")
         serializer = AnimeSerializer(anime, many=True)
         return Response(serializer.data)
 
@@ -69,10 +86,11 @@ def UserSearchAPI(request):
     if request.method == 'GET':
         search = request.GET['search']
         getProfile  = Profile.objects.get(user=request.user)
-        ifBlocked   = Profile.objects.filter(user__username__icontains=search, blockuser=request.user)
-        query_1     = User.objects.filter(username__icontains=search).exclude(id__in=ifBlocked.values_list('user__id', flat=True))
-        query_2     = User.objects.filter(username__icontains=search).exclude(id__in=getProfile.blockuser.values_list('id', flat=True))
-        query       = query_1 | query_2
+        ifBlocked   = Profile.objects.filter(blockuser=request.user)
+        query_2     = User.objects.filter(username__icontains=search).exclude(id__in=getProfile.blockuser.values_list('id', flat=True)).exclude(
+            id__in=ifBlocked.values_list('user', flat=True)
+        )
+        query       =  query_2
         serializer  = UserSerializer(query, many=True)
         return Response(serializer.data)
 
