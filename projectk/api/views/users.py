@@ -418,7 +418,7 @@ def GetFollowerUpdatesAPI(request):
         )
         for i in getFollowers:
             listF.append(i.followers)
-        qs = AnimeStatus.objects.filter(user__pk__in=listF).exclude(anime__categorie__id__in=getProfile.rating.values_list('id', flat=True)).order_by("-date")
+        qs = AnimeStatus.objects.filter(user__pk__in=listF).exclude(anime__rating__id__in=getProfile.rating.values_list('id', flat=True)).order_by("-date")
         serializer = AnimeStatusSerializer(qs, many=True)
         return Response(serializer.data)
 
