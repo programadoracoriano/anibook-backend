@@ -14,14 +14,14 @@ class RatingSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id',)
+        fields = ('id', 'username',)
 
 class ProfileSerializer(serializers.ModelSerializer):
-    blockeduser = UserProfileSerializer(read_only=True, many=True)
+    blockuser = UserProfileSerializer(read_only=True, many=True)
     rating      = RatingSerializer(read_only=True, many=True)
     class Meta:
         model = Profile
-        fields = ('id', 'user', 'image_url', 'cover_url', 'blockeduser', 'rating','points',)
+        fields = ('id', 'user', 'image_url', 'cover_url', 'blockuser', 'rating', 'points',)
 
 class DefaultAvatarSerializer(serializers.ModelSerializer):
     class Meta:

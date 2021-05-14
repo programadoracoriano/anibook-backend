@@ -461,12 +461,17 @@ def GetRatingAPI(request):
 @authentication_classes([TokenAuthentication])
 def AddRatingFilterAPI(request):
     if request.method == 'POST':
-        ratingId     = request.data['rating']
-        getRating    = Rating.objects.get(id=ratingId)
-        profile     = Profile.objects.get(user=request.user)
-        qs          = profile.rating.add(getRating)
-        msg         =  {"msg": "Rating excluded Successfully!"}
-    return Response(msg)
+        ratingId        = request.data['rating']
+        getRating       = Rating.objects.get(id=ratingId)
+        profile         = Profile.objects.get(user=request.user)
+        countRating     = Profile.objects.filter(user=request.user, rating=getRating).count()
+        msg             = {}
+        if countRating > 0:
+            msg = {"msg": "This rating is already excluded!"}
+        else:
+            qs          = profile.rating.add(getRating)
+            msg         =  {"msg": "Rating excluded Successfully!"}
+        return Response(msg)
 
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
@@ -486,8 +491,13 @@ def AddBlockUserAPI(request):
         userId     = request.data['user']
         getUser    = User.objects.get(id=userId)
         profile    = Profile.objects.get(user=request.user)
-        qs          = profile.blockuser.add(getUser)
-        msg         =  {"msg": "User successfully Blocked!"}
+        countBlock = Profile.objects.filter(user=request.user, blockuser=getUser).count()
+        msg = {}
+        if countBlock > 0:
+            msg = {"msg":"User is already blocked"}
+        else:
+            qs          = profile.blockuser.add(getUser)
+            msg         =  {"msg": "User successfully Blocked!"}
     return Response(msg)
 
 @api_view(['GET', 'POST'])
