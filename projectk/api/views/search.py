@@ -18,7 +18,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 @authentication_classes([TokenAuthentication])
 def AnimeSearchAPI(request):
     if request.method == 'GET':
-        getProfile = Profile.objects.get(request.user)
+        getProfile = Profile.objects.get(user=request.user)
         anime = Anime.objects.filter(name__icontains=str(request.GET['search'])).exclude(
                 rating__id=getProfile.values_list('rating', flat=True)
             ) | \
@@ -41,7 +41,7 @@ def GetGenresAPI(request):
 @authentication_classes([TokenAuthentication])
 def SearchByGenreAPI(request):
     if request.method == 'GET':
-        getProfile = Profile.objects.get(request.user)
+        getProfile = Profile.objects.get(user=request.user)
         genre   = request.GET['genre']
         qs      = Anime.objects.filter(categorie__id=genre).exclude(
                 rating__id=getProfile.values_list('rating', flat=True)
@@ -53,7 +53,7 @@ def SearchByGenreAPI(request):
 @authentication_classes([TokenAuthentication])
 def SeasonSearchAPI(request):
     if request.method == 'GET':
-        getProfile  = Profile.objects.get(request.user)
+        getProfile  = Profile.objects.get(user=request.user)
         winter      = ['01', '02', '03']
         spring      = ['04', '05', '06']
         summer      = ['07', '08', '09']
