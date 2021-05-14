@@ -15,7 +15,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @api_view(['GET'])
-@authentication_classes([])
+@authentication_classes([TokenAuthentication])
 def AnimeSearchAPI(request):
     if request.method == 'GET':
         getProfile = Profile.objects.get(request.user)
@@ -38,7 +38,7 @@ def GetGenresAPI(request):
         return Response(serializer.data)
 
 @api_view(['GET'])
-@authentication_classes([])
+@authentication_classes([TokenAuthentication])
 def SearchByGenreAPI(request):
     if request.method == 'GET':
         getProfile = Profile.objects.get(request.user)
@@ -50,7 +50,7 @@ def SearchByGenreAPI(request):
         return Response(serializer.data)
 
 @api_view(['GET'])
-@authentication_classes([])
+@authentication_classes([TokenAuthentication])
 def SeasonSearchAPI(request):
     if request.method == 'GET':
         getProfile  = Profile.objects.get(request.user)
