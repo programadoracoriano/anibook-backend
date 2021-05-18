@@ -481,7 +481,7 @@ def RemoveRatingFilterAPI(request):
         getRating    = Rating.objects.get(id=ratingId)
         profile     = Profile.objects.get(user=request.user)
         qs          = profile.rating.remove(getRating)
-        msg         =  {"msg": "Rating excluded Successfully!"}
+        msg         =  {"msg": "Rating reverted Successfully!"}
     return Response(msg)
 
 @api_view(['GET', 'POST'])
@@ -494,7 +494,7 @@ def AddBlockUserAPI(request):
         countBlock = Profile.objects.filter(user=request.user, blockuser=getUser).count()
         msg = {}
         if countBlock > 0:
-            msg = {"msg":"User is already blocked"}
+            msg         = {"msg":"User is already blocked"}
         else:
             qs          = profile.blockuser.add(getUser)
             msg         =  {"msg": "User successfully Blocked!"}

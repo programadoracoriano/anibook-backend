@@ -45,7 +45,7 @@ def SearchByGenreAPI(request):
         genre   = request.GET['genre']
         qs      = Anime.objects.filter(categorie__id=genre).exclude(
                 rating__id__in=getProfile.rating.values_list('id', flat=True)
-            ).order_by("-type__type", "name")
+            ).order_by("-type__type", "name")[:100]
         serializer = AnimeSerializer(qs, many=True)
         return Response(serializer.data)
 
