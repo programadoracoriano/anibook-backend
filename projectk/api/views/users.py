@@ -251,25 +251,16 @@ def DetectFollowerAPI(request):
 @authentication_classes([TokenAuthentication])
 def ListFollowersAPI(request):
     if request.method == 'GET':
-        getProfile    = Profile.objects.get(user=request.user)
-        ifBlocked     = Profile.objects.filter(blockuser=request.user)
-        followersList = []
-        follower      = ''
+        getProfile      = Profile.objects.get(user=request.user)
+        ifBlocked       = Profile.objects.filter(blockuser=request.user)
+        followersList   = []
         getF = Followers.objects.filter(follower=request.user).exclude(follower__id__in=getProfile.blockuser.values_list('id', flat=True)).exclude(
             id__in=ifBlocked.values_list('user', flat=True)
         )
         for i in getF:
             followersList.append(i.followers)
         qs = User.objects.filter(id__in=followersList)
-        page = request.GET.get('page', 1)
-        paginator = Paginator(qs, 15)
-        try:
-            follower = paginator.page(page)
-        except PageNotAnInteger:
-            follower = paginator.page(1)
-        except EmptyPage:
-            follower = paginator.page(paginator.num_pages)
-        serializer = UserSerializer(follower, many=True)
+        serializer = UserSerializer(qs, many=True)
         return Response(serializer.data)
 
 @api_view(['GET'])
@@ -297,8 +288,17 @@ def ListFollowingAPI(request):
 @authentication_classes([TokenAuthentication])
 def AnimeReviewAPI(request):
     if request.method == 'GET':
+        qs = ''
         id = request.GET['id']
-        qs = AnimeReview.objects.filter(anime__id=id, draft=1)
+        if request.user.is_anonymous == False:
+            getProfile = Profile.objects.get(user=request.user)
+            ifBlocked = Profile.objects.filter(blockuser=request.user)
+            qs = AnimeReview.objects.filter(anime__id=id, draft=1).exclude(
+                user__id__in=getProfile.blockuser.values_list('id', flat=True)).exclude(
+                user__id__in=ifBlocked.values_list('user', flat=True)
+            )
+        elif request.user.is_anonymous:
+            qs = AnimeReview.objects.filter(anime__id=id, draft=1)
         serializer = AnimeReviewSerializer(qs, many=True)
         return Response(serializer.data)
     if request.method == 'POST':
@@ -321,15 +321,19 @@ def AnimeReviewAPI(request):
         return Response(msg)
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
+@authentication_classes([])
 def getAllReviewsAPI(request):
     if request.method == 'GET':
-        getProfile  = Profile.objects.get(user=request.user)
-        ifBlocked   = Profile.objects.filter(blockuser=request.user)
-        id          = request.GET['id']
-        qs          = AnimeReview.objects.filter(anime__id=id, draft=1).exclude(user__id__in=getProfile.blockuser.values_list('id', flat=True)).exclude(
+        id = request.GET['id']
+        qs              = ''
+        if request.user.is_anonymous == False:
+            getProfile      = Profile.objects.get(user=request.user)
+            ifBlocked       = Profile.objects.filter(blockuser=request.user)
+            qs              = AnimeReview.objects.filter(anime__id=id, draft=1).exclude(user__id__in=getProfile.blockuser.values_list('id', flat=True)).exclude(
             user__id__in=ifBlocked.values_list('user', flat=True)
-        )
+            )
+        elif request.user.is_anonymous:
+            qs = AnimeReview.objects.filter(anime__id=id, draft=1)
         serializer  = AnimeReviewSerializer(qs, many=True)
         return Response(serializer.data)
 
@@ -382,6 +386,12 @@ def collectPointsAPI(request):
         return Response(msg)
 
 
+
+
+
+
+
+
 @api_view(['GET', 'POST'])
 @authentication_classes([TokenAuthentication])
 def TopicAPI(request):
@@ -410,9 +420,9 @@ def TopicAPI(request):
 @authentication_classes([TokenAuthentication])
 def GetFollowerUpdatesAPI(request):
     if request.method == 'GET':
+        listF = []
         getProfile = Profile.objects.get(user=request.user)
         ifBlocked = Profile.objects.filter(blockuser=request.user)
-        listF = []
         getFollowers = Followers.objects.filter(follower=request.user).exclude(followers__in=getProfile.blockuser.values_list('id', flat=True)).exclude(
             followers__in=ifBlocked.values_list('user', flat=True)
         )
@@ -429,6 +439,7 @@ def ReportMotiveAPI(request):
         qs          = ReportMotive.objects.order_by("motive")
         serializer  = ReportMotiveSerializer(qs, many=True)
         return Response(serializer.data)
+
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])

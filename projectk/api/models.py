@@ -24,7 +24,7 @@ class Profile(models.Model):
   image       = ResizedImageField(size=[200, 200], quality=80, keep_meta=False,
                             upload_to='media/profile/', force_format='JPEG',
                             default='profile/user-placeholder.png', null=True)
-  cover       = ResizedImageField(quality=85, keep_meta=False,
+  cover       = ResizedImageField(quality=80, keep_meta=False,
                             upload_to='media/profile/covers/', force_format='JPEG',
                             default='profile/user-placeholder.png', null=True)
   points      = models.IntegerField(null=True, blank=True, default=0)
@@ -60,7 +60,12 @@ class DefaultAvatar(models.Model):
     def image_url(self):
         return "{0}{1}".format(settings.SITE_URL, self.image.url)
 
+class UserContentStatus(models.Model):
+    val     = models.IntegerField(null=False, blank=False, verbose_name="Valor Numérico")
+    status  = models.CharField(max_length=75, null=False, blank=False, verbose_name="Status")
 
+    def __str__(self):
+        return self.status
 
 class AnimeType(models.Model):
     type = models.CharField(max_length=75, null=False, blank=False, verbose_name="Type")
@@ -159,6 +164,8 @@ class Topic(models.Model):
     anime       = models.ForeignKey(Anime, null=True, blank=True, verbose_name="Anime", on_delete=models.CASCADE)
     title       = models.CharField(max_length=150, null=False, blank=False, verbose_name="title")
     description = models.TextField(max_length=5000, null=False, blank=False, verbose_name="Description")
+    image       = ResizedImageField(null=True, blank=True, size=[800, 600], keep_meta=False, quality=80, upload_to='topicimages',
+                              force_format='JPEG')
     date        = models.DateField(auto_now=True)
 
 class TopicComment(models.Model):
@@ -199,7 +206,7 @@ class Followers(models.Model):
 class CustomList(models.Model):
     user        = models.ForeignKey(User, null=True, blank=False, verbose_name="User", on_delete=models.CASCADE)
     title       = models.CharField(max_length=100, null=False, blank=False, verbose_name="Title")
-    image       = ResizedImageField(null=True, blank=False, size=[800, 600], keep_meta=False, quality=80, upload_to='custom_list',
+    image       = ResizedImageField(null=True, blank=False, keep_meta=False, quality=80, upload_to='custom_list',
                       force_format='JPEG')
 
     @property
@@ -226,6 +233,22 @@ class ReportSection(models.Model):
     pid     = models.CharField(max_length=100, blank=False, null=False, verbose_name="ID")
     motive  = models.ForeignKey(ReportMotive, null=False, blank=False, verbose_name="Motive", on_delete=models.CASCADE)
     date    = models.DateField(auto_now=True)
+
+class QuizzLevel(models.Model):
+    val     = models.IntegerField(null=False, blank=False, verbose_name="Valor do Nível")
+    level   = models.CharField(max_length=100, blank=False, null=False, verbose_name="Level")
+
+class Quizz(models.Model):
+    user        = models.ForeignKey(User, null=False, blank=False, verbose_name="User", on_delete=models.CASCADE)
+    question    = models.CharField(max_length=360, blank=False, null=False, verbose_name="Question")
+    image       = ResizedImageField(null=True, blank=True, keep_meta=False, quality=80, upload_to='quizz',
+                              force_format='JPEG')
+    level       = models.ForeignKey(QuizzLevel, null=False, blank=False, verbose_name="Level", on_delete=models.CASCADE)
+    anime       = models.ForeignKey(Anime, null=False, blank=False, verbose_name="Anime", on_delete=models.CASCADE)
+    status      = models.ForeignKey(UserContentStatus, null=False, blank=False, verbose_name="Status", on_delete=models.CASCADE)
+    date_create = models.DateField(auto_now=True)
+
+#class QuizzAnswers(models.Model):
 
 
 
