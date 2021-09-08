@@ -42,8 +42,10 @@ INSTALLED_APPS = [
     'corsheaders',
     'api',
     'website',
+    'channels',
 ]
 
+ASGI_APPLICATION = "projectk.asgi.application"
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
