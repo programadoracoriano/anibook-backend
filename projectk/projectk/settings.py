@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'smartfields',
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
@@ -44,6 +46,9 @@ INSTALLED_APPS = [
     'website',
     'channels',
 ]
+
+SITE_ID = 1
+
 
 ASGI_APPLICATION = "projectk.asgi.application"
 
@@ -116,9 +121,9 @@ WSGI_APPLICATION = 'projectk.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'projectk',
-        'USER': 'doggoncatto',
-        'PASSWORD': 'doggoncatto',
+        'NAME': 'anibook',
+        'USER': 'anibook',
+        'PASSWORD': 'anibook',
         'HOST': 'localhost',
         'PORT': '',
     }

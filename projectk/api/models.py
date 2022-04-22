@@ -3,7 +3,9 @@ from django.contrib.auth.models import User
 from django_resized import ResizedImageField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from smartfields import fields
+from smartfields.dependencies import FileDependency
+from smartfields.processors import ImageProcessor
 # Create your models here.
 from django.conf import settings
 
@@ -125,10 +127,15 @@ class SeasonNumber(models.Model):
         return self.tag
 
 class Anime(models.Model):
-    cover_image         =   ResizedImageField(null=True, blank=True, size=[800, 600], keep_meta=False, quality=80, upload_to='anime_cover',
-                              force_format='JPEG')
-    image               =   ResizedImageField(null=True, blank=False, size=[800, 600], keep_meta=False, quality=80, upload_to='anime',
-                              force_format='JPEG')
+    cover_image         =   fields.ImageField(null=True, blank=True, upload_to='anime_cover', dependencies=[
+                                FileDependency(processor=ImageProcessor(
+                                format='WEBP', quality=85, scale={'max_width': 800, 'max_height': 600})),
+                                ])
+
+    image               =   fields.ImageField(null=True, blank=True, upload_to='anime', dependencies=[
+                                FileDependency(processor=ImageProcessor(
+                                format='WEBP', quality=85, scale={'max_width': 800, 'max_height': 600})),
+                                ])
     name                =   models.CharField(max_length=300, null=False, blank=False, verbose_name="Anime Name")
     alternative_title   =   models.ManyToManyField(AlternativeTitle, blank=True, verbose_name="Alternative Title")
     season_number       =   models.ForeignKey(SeasonNumber, null=True, blank=True, verbose_name="Season", on_delete=models.CASCADE)
@@ -190,8 +197,8 @@ class AnimeStatus(models.Model):
     user            = models.ForeignKey(User, null=False, blank=False, verbose_name="User", on_delete=models.CASCADE)
     episodes_number = models.IntegerField(null=True, blank=True, verbose_name="Number of Episodes")
     completed       = models.IntegerField(null=True, blank=True, verbose_name="How many times completed?")
-    status          = models.ForeignKey(Status, null=False, blank=False, verbose_name="Status", on_delete=models.CASCADE)
-    score           = models.IntegerField(null=True, blank=False, verbose_name="Score")
+    status          = models.ForeignKey(Status, null=True, blank=True, verbose_name="Status", on_delete=models.CASCADE)
+    score           = models.IntegerField(null=True, blank=True, verbose_name="Score")
     note            = models.TextField(max_length=500, null=True, blank=True, verbose_name="Notes")
     date            = models.DateTimeField()
 

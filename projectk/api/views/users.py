@@ -41,15 +41,15 @@ def SignupAPI(request):
         getUsers = User.objects.filter(username=username)
         getEmail = User.objects.filter(email=email)
         if getUsers.count() > 0:
-            msg = {'msg':'User already exists!Please choose other username!', 'success':False}
+            msg = {'msg':'Nome do usuário já existe.Por favor escolha outro nome de usuário!', 'success':False}
         elif getEmail.count() > 0:
-            msg = {'msg':'E-mail already exists!Please choose another e-mail!', 'success':False}
+            msg = {'msg':'E-mail já existe. Por favor escolha outro e-mail.', 'success':False}
         elif ' ' in username == True:
-            msg = {'msg': 'Your username cannot have spaces!', 'success': False}
+            msg = {'msg': 'O nome de usuário não pode conter espaços.', 'success': False}
         elif len(username) < 6 or len(username)> 20:
-            msg = {'msg': 'Your username needs to be 6 to 20 characters.', 'success':False}
+            msg = {'msg': 'O nome de usuário precisa ter entre 6 a 20 carateres.', 'success':False}
         elif len(password) < 8 or len(password)>16:
-            msg = {'msg': 'Your passwords needs to be 8 to 16 characters.', 'success':False}
+            msg = {'msg': 'A tua senha precisa ter entre 8 a 16 carateres.', 'success':False}
         else:
             qs = User.objects.create_user(username=username, email=email, password=password)
             msg = {'msg': 'User created successfully!', 'success':True}
@@ -68,21 +68,9 @@ def LoginAPI(request):            # <-- And here
             token = Token.objects.get_or_create(user=user)
             print(token[0])
 
-            content = {'token': str(token[0]), 'msg':'You have successfully logged!', 'success':True}
+            content = {'token': str(token[0]), 'msg':'Logado com sucesso.', 'success':True}
         else:
-            content = {'msg':'Username or password are wrong!', 'success':False}
-        return Response(content)
-
-    elif request.method == 'POST':
-        content = {}
-        username = request.data['username']
-        password = request.data['password']
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            User.objects.create_user(username=username, password=password)
-            message = {"msg":"You have successfully Registered!"}
-        else:
-            message = {"msg": "Some error has occured"}
+            content = {'msg':'Usuário ou senha estão errados.', 'success':False}
         return Response(content)
 
 @api_view(['GET', 'POST'])
@@ -132,14 +120,14 @@ def EmailChangeAPI(request):
         email       = request.data['email']
         countMail   = User.objects.filter(email=email).count() 
         if email is None:
-            msg = {"msg":"You need to Insert a E-mail"}
+            msg = {"msg":"Precisas de inserir um e-mail"}
         elif countMail > 0:
-            msg = {"msg":"This E-mail is Already Registered!"}
+            msg = {"msg":"Este e-mail já está cadastrado."}
         else:
             getUser         = User.objects.get(id=request.user.id)
             getUser.email   = email
             getUser.save()
-            msg = {"msg":"E-mail successfully changed"}
+            msg = {"msg":"E-mail atualizado com sucesso"}
         return Response(msg)
 
 
