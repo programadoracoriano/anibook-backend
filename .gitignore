@@ -2,12 +2,12 @@
 projectk/*.log
 projectk/*.pot
 projectk/*.pyc
-__pycache__
-db.sqlite3
-media
+projectk/__pycache__
+projectk/db.sqlite3
+projectk/media
 
 # Backup files #
-*.bak
+projectk/*.bak
 
 # If you are using PyCharm #
 # User-specific stuff
@@ -37,37 +37,37 @@ media
 .idea/**/libraries
 
 # File-based project format
-*.iws
+projectk/*.iws
 
 # IntelliJ
-out/
+projectk/out/
 
 # JIRA plugin
-atlassian-ide-plugin.xml
+projectk/atlassian-ide-plugin.xml
 
 # Python #
-*.py[cod]
-*$py.class
+projectk/*.py[cod]
+projectk/*$py.class
 
 # Distribution / packaging
 .Python build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.whl
-*.egg-info/
-.installed.cfg
-*.egg
-*.manifest
-*.spec
+projectk/develop-eggs/
+projectk/dist/
+projectk/downloads/
+projectk/eggs/
+projectk/.eggs/
+projectk/lib/
+projectk/lib64/
+projectk/parts/
+projectk/sdist/
+projectk/var/
+projectk/wheels/
+projectk/*.whl
+projectk/*.egg-info/
+projectk/.installed.cfg
+projectk/*.egg
+projectk/*.manifest
+projectk/*.spec
 
 # Installer logs
 pip-log.txt
