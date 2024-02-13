@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'api',
     'website',
-    'channels',
 ]
 
 SITE_ID = 1
