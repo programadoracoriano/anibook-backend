@@ -43,8 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'api',
-    'website',
+    'users',
 ]
 
 SITE_ID = 1
@@ -179,3 +178,5 @@ MEDIA_ROOT  = BASE_DIR / "media"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+AUTH_USER_MODEL = 'users.User'
