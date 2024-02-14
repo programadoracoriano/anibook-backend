@@ -1,9 +1,9 @@
-from api.urls.listsurls import urlpatterns as list_urls
-from api.urls.userurls import urlpatterns as user_urls
-from api.urls.searchurls import urlpatterns as search_urls
+from django.contrib import admin
+from django.urls import path, include, re_path
+from django.conf import settings
+from django.conf.urls.static import static
 
-urlpatterns = list_urls
-urlpatterns += user_urls
-urlpatterns += search_urls
-
-
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('users/', include('users.urls')),
+]
