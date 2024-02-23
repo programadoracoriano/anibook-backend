@@ -10,5 +10,7 @@ urlpatterns = [
     path('register/', views.CreateUserView.as_view(), name='register-user'),
     path('login/', TokenObtainPairView.as_view(), name='login-user'),
     path('refresh/', TokenRefreshView.as_view(), name='token-refresh-user'),
-    path('profile/', views.UserProfileView.as_view(), name='profile-user'),
+    path('profile/create/', views.CreateUserProfileView.as_view(), name='profile-user'),
+    path('profile/update/', views.UpdateUserProfileView.as_view(), name='update-profile-user'),
+    path('profile/retrieve/', views.RetrieveUserProfileView.as_view(), name='retrieve-profile-user'),
 ]
